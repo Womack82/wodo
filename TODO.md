@@ -67,4 +67,5 @@ on coche la case `[x]`, on la déplace dans « Fait » et on fait un commit Git.
 - [x] v1.28 — Logo W de l'en-tête déplacé à gauche de « Bonjour Womack », en plus petit (40 px de large au lieu de 58)
 - [x] v1.29 — Réglages → Prénom : changer le prénom affiché sur l'accueil (« Bonjour … »), gardé sur l'appareil (pas dans les exports) ; bouton « Remettre « Womack » »
 - [x] v1.30 — Noms techniques « mes-listes » remplacés par « wodo » : données de l'appareil (liste, notes, prénom, clés, relais) et photos déplacées automatiquement au premier lancement ; sauvegardes au format « wodo » (les anciennes « mes-listes » s'importent toujours) ; le nettoyage du cache n'efface plus que les caches de Wodo (prépare l'app Recettes sur le même site)
-- [ ] Renommer le dépôt GitHub « mes-listes » en « wodo » (après avoir exporté une sauvegarde sur l'iPhone), puis installer la nouvelle icône depuis https://womack82.github.io/wodo/ et importer la sauvegarde
+- [x] Dépôt GitHub renommé « mes-listes » → « wodo » : l'app est maintenant à https://womack82.github.io/wodo/
+- [ ] Sur l'iPhone : installer la nouvelle icône depuis https://womack82.github.io/wodo/, importer la sauvegarde, recoller les clés TMDB et Gemini, l'adresse du relais et le prénom, puis supprimer l'ancienne icône

@@ -14,8 +14,9 @@
 - Le nettoyage du cache (`service-worker.js`) ne doit effacer que les
   caches de Wodo : d'autres apps sont publiées sur le même site
   (womack82.github.io).
-- Publiée sur GitHub Pages : https://womack82.github.io/mes-listes/
-  (le dépôt sera renommé « wodo » → https://womack82.github.io/wodo/).
+- Publiée sur GitHub Pages : https://womack82.github.io/wodo/
+  (dépôt github.com/Womack82/wodo, renommé depuis « mes-listes » le
+  15/11/2026 ; l'ancienne adresse /mes-listes/ ne marche plus).
   Le relais Cloudflare garde son nom « mes-listes-relais ».
 - Utilisée surtout sur iPhone.
 - Les améliorations à faire et déjà faites sont suivies dans `TODO.md`.
