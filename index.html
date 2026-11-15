@@ -32,7 +32,6 @@
       <!-- Logo W (icons/logo-w.svg), en filigrane. 650 × 444 réduit à 58 px de large -->
       <div class="titre-app">
         <img class="logo" src="icons/logo-w.svg" alt="Wodo" width="58" height="40">
-        <span id="version" class="version"></span>
       </div>
       <div class="entete-boutons">
         <button type="button" id="bouton-reglages" class="bouton-entete" aria-label="Réglages">
@@ -120,7 +119,11 @@
         <button type="button" id="reglages-retour" class="bouton-rond" aria-label="Retour" hidden>
           <svg viewBox="0 0 24 24" class="icone-svg" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg>
         </button>
-        <h2 id="reglages-titre">Réglages</h2>
+        <!-- Titre, avec le numéro de version de l'app juste en dessous -->
+        <div class="reglages-titres">
+          <h2 id="reglages-titre">Réglages</h2>
+          <span id="version" class="version"></span>
+        </div>
         <button type="button" id="reglages-fermer" class="bouton-rond" aria-label="Fermer">
           <svg viewBox="0 0 24 24" class="icone-svg" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>
         </button>

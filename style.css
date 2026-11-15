@@ -131,17 +131,6 @@ h1, h2 { color: var(--texte); }
   pointer-events: none;
 }
 .logo { display: block; width: 58px; height: auto; opacity: 0.4; }
-/* Numéro de version : en bas à droite du logo */
-.version {
-  position: absolute;
-  left: 100%;
-  bottom: 0;
-  margin-left: 4px;
-  font-size: 0.7rem;
-  line-height: 1;
-  white-space: nowrap;
-  color: var(--gris);
-}
 
 .entete-boutons { position: relative; z-index: 1; display: flex; gap: 8px; flex-shrink: 0; }
 /* Bouton rond de 48 px (Réglages) : verre, icône bleue */
@@ -567,7 +556,16 @@ h1, h2 { color: var(--texte); }
   margin-bottom: 10px;
 }
 #reglages-retour { grid-column: 1; }
-#reglages-titre { grid-column: 2; margin: 0; text-align: center; font-size: 1.15rem; }
+.reglages-titres { grid-column: 2; text-align: center; }
+#reglages-titre { margin: 0; font-size: 1.15rem; }
+/* Numéro de version : petit, gris, sous le titre « Réglages » */
+.version {
+  display: block;
+  margin-top: 2px;
+  font-size: 0.75rem;
+  line-height: 1.2;
+  color: var(--gris);
+}
 #reglages-fermer { grid-column: 3; }
 
 /* Lignes du menu Réglages : tuiles arrondies de 60 px, icône, titre, badge, flèche */
