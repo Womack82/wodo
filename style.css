@@ -531,6 +531,7 @@ h1, h2 { color: var(--texte); }
 .panneau-haut[open] #vue-menu .ligne-reglage:nth-child(4) { animation-delay: 270ms; }
 .panneau-haut[open] #vue-menu .ligne-reglage:nth-child(5) { animation-delay: 270ms; }
 .panneau-haut[open] #vue-menu .ligne-reglage:nth-child(6) { animation-delay: 270ms; }
+.panneau-haut[open] #vue-menu .ligne-reglage:nth-child(n+7) { animation-delay: 270ms; }
 @keyframes apparaitre { from { opacity: 0; transform: translateY(-8px); } }
 
 /* Boutons ronds des panneaux (retour, fermer) : 44 px, bleu pâle */
@@ -942,7 +943,8 @@ html.verrou body { overflow: hidden; }
   color: var(--texte);
 }
 #vue-cles > .aide { margin: 16px 4px 0; font-size: 14px; }
-#formulaire-relais .etiquette { display: block; margin: 0 4px 6px; }
+#formulaire-relais .etiquette,
+#formulaire-prenom .etiquette { display: block; margin: 0 4px 6px; }
 
 /* ---------- Fenêtre de confirmation de l'import ---------- */
 #fenetre-import {

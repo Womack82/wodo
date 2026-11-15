@@ -131,6 +131,16 @@
 
       <!-- Menu : une ligne par rubrique -->
       <div id="vue-menu">
+        <!-- Prénom affiché sur l'accueil (« Bonjour … ») -->
+        <button type="button" class="ligne-reglage" data-vue="prenom">
+          <!-- Silhouette -->
+          <span class="ligne-icone"><svg viewBox="0 0 24 24" class="icone-svg" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4.5 20.5a7.5 7.5 0 0 1 15 0"/></svg></span>
+          <span class="ligne-textes">
+            <span class="ligne-titre">Prénom</span>
+            <span class="ligne-sous-titre">Affiché sur l'accueil (« Bonjour … »)</span>
+          </span>
+          <svg viewBox="0 0 24 24" class="icone-svg chevron" aria-hidden="true"><path d="M9 5l7 7-7 7"/></svg>
+        </button>
         <!-- Notes : ouvre la page Notes (pas une vue du panneau), nombre de notes à faire -->
         <button type="button" id="ligne-notes" class="ligne-reglage">
           <!-- Bloc-notes -->
@@ -197,6 +207,25 @@
           <p>Jeux vidéo : données fournies par
             <a href="https://www.igdb.com/" target="_blank" rel="noopener">IGDB</a>.</p>
         </footer>
+      </div>
+
+      <!-- Prénom : gardé sur cet appareil, affiché sous « Bonjour » -->
+      <div id="vue-prenom" hidden>
+        <form id="formulaire-prenom" class="sauvegarde">
+          <p class="aide">
+            Le prénom affiché en haut de l'accueil, sous « Bonjour ».
+            Il est gardé dans la mémoire de cet appareil : à changer sur
+            chaque appareil (PC, iPhone).
+          </p>
+          <label for="champ-prenom" class="etiquette">Prénom</label>
+          <input id="champ-prenom" class="champ-reglage" type="text" maxlength="30"
+                 autocomplete="given-name" autocapitalize="words" spellcheck="false">
+          <div class="boutons-sauvegarde">
+            <button type="submit">Enregistrer</button>
+            <button type="button" id="bouton-effacer-prenom">Remettre « Womack »</button>
+          </div>
+          <p id="message-prenom" class="message" role="status" hidden></p>
+        </form>
       </div>
 
       <!-- Autres : éléments « Autre » à faire (cochables, modifiables) -->

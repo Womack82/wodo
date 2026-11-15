@@ -6,7 +6,7 @@
 // ⚠️ Doit toujours être le même que NOM_CACHE dans service-worker.js
 // On reste en v1 : chaque changement, quel qu'il soit, ajoute 1 au second
 // numéro (v1.1 → v1.2 → v1.3…). (Avant le 10/11/2026 : v10 à v15.1.)
-const VERSION = "v1.28";
+const VERSION = "v1.29";
 
 // Noms sous lesquels on range les données dans la mémoire du téléphone
 const CLE_STOCKAGE = "mes-listes";
@@ -233,13 +233,25 @@ function allerA(page) {
   afficher(true);
 }
 
-// En-tête de l'accueil : « Bonjour » (petit) et « Womack » (grand).
+// Prénom affiché sur l'accueil : gardé sur l'appareil (Réglages → Prénom),
+// « Womack » s'il n'a jamais été changé
+const CLE_PRENOM = "mes-listes-prenom";
+const PRENOM_PAR_DEFAUT = "Womack";
+function lirePrenom() {
+  try {
+    return localStorage.getItem(CLE_PRENOM) || PRENOM_PAR_DEFAUT;
+  } catch {
+    return PRENOM_PAR_DEFAUT;
+  }
+}
+
+// En-tête de l'accueil : « Bonjour » (petit) et le prénom (grand).
 // Page catégorie : le nom de la catégorie en grand ; le petit texte
 // (« 12 à voir », « 8 fiches ») est écrit par afficher().
 function enteteSalut() {
   if (pageActive === "accueil") {
     entetePetit.textContent = "Bonjour";
-    enteteGrand.textContent = "Womack";
+    enteteGrand.textContent = lirePrenom();
   } else {
     enteteGrand.textContent = NOMS_PLURIELS[pageActive];
   }
@@ -731,6 +743,7 @@ const reglagesTitre = document.getElementById("reglages-titre");
 const reglagesRetour = document.getElementById("reglages-retour");
 const VUES = {
   menu: { titre: "Réglages", bloc: document.getElementById("vue-menu") },
+  prenom: { titre: "Prénom", bloc: document.getElementById("vue-prenom") },
   faits: { titre: "Terminés", bloc: document.getElementById("vue-faits") },
   autres: { titre: "Anciens « Autre »", bloc: document.getElementById("vue-autres") },
   sauvegarde: { titre: "Sauvegarde", bloc: document.getElementById("vue-sauvegarde") },
@@ -2614,6 +2627,42 @@ brancherCle("TMDB", CLE_TMDB, "cle", (cle) => appelerTmdb("/authentication", {},
   });
 
   afficherEtatRelais();
+}
+
+// --- 7 ter bis. Le prénom de l'accueil ---------------------------
+// Gardé uniquement sur l'appareil (localStorage), pas dans les exports.
+{
+  const formulairePrenom = document.getElementById("formulaire-prenom");
+  const champPrenom = document.getElementById("champ-prenom");
+  const messagePrenom = document.getElementById("message-prenom");
+  const boutonEffacerPrenom = document.getElementById("bouton-effacer-prenom");
+
+  const afficherPrenom = () => {
+    champPrenom.value = lirePrenom();
+    // « Remettre Womack » n'a de sens que si le prénom a été changé
+    boutonEffacerPrenom.hidden = lirePrenom() === PRENOM_PAR_DEFAUT;
+    if (pageActive === "accueil") enteteSalut();
+  };
+
+  formulairePrenom.addEventListener("submit", (evenement) => {
+    evenement.preventDefault();
+    const prenom = champPrenom.value.trim();
+    if (!prenom) {
+      afficherMessage("Écris un prénom avant d'enregistrer.", false, messagePrenom);
+      return;
+    }
+    localStorage.setItem(CLE_PRENOM, prenom);
+    afficherPrenom();
+    afficherMessage(`Prénom enregistré : « Bonjour ${prenom} ».`, true, messagePrenom);
+  });
+
+  boutonEffacerPrenom.addEventListener("click", () => {
+    localStorage.removeItem(CLE_PRENOM);
+    afficherPrenom();
+    afficherMessage(`Prénom remis à « ${PRENOM_PAR_DEFAUT} ».`, true, messagePrenom);
+  });
+
+  afficherPrenom();
 }
 
 // --- 7 quater. La clé et le modèle Gemini (ajout avec l'IA) --------

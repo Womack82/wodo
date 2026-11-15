@@ -65,3 +65,4 @@ on coche la case `[x]`, on la déplace dans « Fait » et on fait un commit Git.
 - [x] v1.26 — Menu du bouton + : catégories dans le même ordre que la barre du bas (Recette, Cocktail, Film, Série, Jeu)
 - [x] v1.27 — Numéro de version déplacé : il n'est plus sous le logo W de l'accueil, il s'affiche en haut du panneau Réglages, sous le titre
 - [x] v1.28 — Logo W de l'en-tête déplacé à gauche de « Bonjour Womack », en plus petit (40 px de large au lieu de 58)
+- [x] v1.29 — Réglages → Prénom : changer le prénom affiché sur l'accueil (« Bonjour … »), gardé sur l'appareil (pas dans les exports) ; bouton « Remettre « Womack » »
