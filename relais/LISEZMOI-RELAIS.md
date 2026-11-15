@@ -85,7 +85,7 @@ Elle donne deux codes : un **Client ID** et un **Client Secret**.
    - **URL de redirection OAuth** : `https://localhost` (obligatoire mais
      inutilisée ici ; Twitch exige une adresse en **https**), puis clique
      sur **Ajouter**. Si Twitch la refuse, mets l'adresse de l'app :
-     `https://womack82.github.io/mes-listes/` ;
+     `https://womack82.github.io/wodo/` ;
    - **Catégorie** : **Application Integration** ;
    - **Type de client** : **Confidentiel**.
 6. Coche la case anti-robot, puis **Créer**.

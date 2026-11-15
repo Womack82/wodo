@@ -4,11 +4,19 @@
 
 - Petite web app installable (PWA) pour tenir des listes : films, séries,
   jeux, recettes et autres. Son nom affiché est **Wodo** (depuis la v1.21).
-- Les noms techniques gardent « mes-listes » et ne doivent pas changer :
-  clés de la mémoire (localStorage), base des photos (IndexedDB), format
-  des sauvegardes (`format: "mes-listes"`), adresse du site et du dépôt.
-  Les changer ferait perdre les données déjà enregistrées.
+- Depuis la v1.30, les noms techniques commencent par « wodo » : clés de
+  la mémoire (localStorage), base des photos (IndexedDB « wodo-photos »),
+  format des sauvegardes (`format: "wodo"`), nom du cache (« wodo-v… »).
+  Les anciens noms « mes-listes… » restent connus : `migration.js` et
+  `photos.js` déplacent les anciennes données, l'import accepte les
+  anciennes sauvegardes. Ne pas retirer ce code ni renommer à nouveau
+  sans migration : on perdrait les données déjà enregistrées.
+- Le nettoyage du cache (`service-worker.js`) ne doit effacer que les
+  caches de Wodo : d'autres apps sont publiées sur le même site
+  (womack82.github.io).
 - Publiée sur GitHub Pages : https://womack82.github.io/mes-listes/
+  (le dépôt sera renommé « wodo » → https://womack82.github.io/wodo/).
+  Le relais Cloudflare garde son nom « mes-listes-relais ».
 - Utilisée surtout sur iPhone.
 - Les améliorations à faire et déjà faites sont suivies dans `TODO.md`.
 

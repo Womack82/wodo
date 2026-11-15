@@ -17,8 +17,8 @@
 // ============================================================
 
 // --- 1. Clé et modèle -------------------------------------------
-const CLE_GEMINI = "mes-listes-cle-gemini";
-const CLE_MODELE_GEMINI = "mes-listes-modele-gemini";
+const CLE_GEMINI = "wodo-cle-gemini";
+const CLE_MODELE_GEMINI = "wodo-modele-gemini";
 // Rapide et peu coûteux ; modifiable dans Réglages → IA (Gemini)
 const MODELE_GEMINI_DEFAUT = "gemini-3.5-flash";
 const ADRESSE_GEMINI = "https://generativelanguage.googleapis.com/v1beta/models/";

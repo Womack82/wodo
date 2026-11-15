@@ -8,12 +8,12 @@
 // - glisser une ligne vers la gauche fait apparaître « Supprimer »
 //   (sur ordinateur : petit bouton au survol) ; suppression définitive ;
 // - les notes cochées descendent dans « Terminées (N) », repliée.
-// Les notes sont rangées à part (clé « mes-listes-notes ») : elles
+// Les notes sont rangées à part (clé « wodo-notes ») : elles
 // n'apparaissent ni dans les compteurs, ni dans « Derniers ajoutés ».
 // Chargé après app.js (voir index.html).
 // ============================================================
 
-const CLE_NOTES = "mes-listes-notes";
+const CLE_NOTES = "wodo-notes";
 const LIMITES_NOTES = { nombre: 500, longueur: 1000 };
 
 // Chaque note : { id, texte, fait, dateCreation } (date au format ISO).

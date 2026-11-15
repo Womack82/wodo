@@ -7,7 +7,7 @@
 // téléphone continuera d'utiliser l'ancienne copie :
 // chaque changement ajoute 1 au second numéro : v1.1 → v1.2 → v1.3…
 // ⚠️ Change aussi VERSION en haut de app.js (affichée à côté du logo).
-const NOM_CACHE = "mes-listes-v1.29";
+const NOM_CACHE = "wodo-v1.30";
 
 // ⚠️ Si un seul de ces fichiers est introuvable, rien n'est mis en cache
 // (l'app ne marchera pas hors ligne) : vérifier chaque chemin.
@@ -15,6 +15,7 @@ const FICHIERS = [
   "./",
   "index.html",
   "style.css",
+  "migration.js",
   "recettes.js",
   "ia.js",
   "photos.js",
@@ -40,11 +41,15 @@ self.addEventListener("install", (evenement) => {
   self.skipWaiting();
 });
 
-// À l'activation : on supprime les anciens caches (v1 quand v2 arrive, etc.)
+// À l'activation : on supprime les anciens caches de Wodo (v1 quand v2
+// arrive, etc.). Seulement ceux de Wodo (« wodo-… », ou « mes-listes-… »
+// avant la v1.30) : les autres apps du même site (womack82.github.io)
+// gardent les leurs.
+const estCacheDeWodo = (nom) => nom.startsWith("wodo-") || nom.startsWith("mes-listes-");
 self.addEventListener("activate", (evenement) => {
   evenement.waitUntil(
     caches.keys().then((noms) =>
-      Promise.all(noms.filter((n) => n !== NOM_CACHE).map((n) => caches.delete(n)))
+      Promise.all(noms.filter((n) => estCacheDeWodo(n) && n !== NOM_CACHE).map((n) => caches.delete(n)))
     )
   );
   self.clients.claim();

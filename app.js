@@ -6,10 +6,12 @@
 // ⚠️ Doit toujours être le même que NOM_CACHE dans service-worker.js
 // On reste en v1 : chaque changement, quel qu'il soit, ajoute 1 au second
 // numéro (v1.1 → v1.2 → v1.3…). (Avant le 10/11/2026 : v10 à v15.1.)
-const VERSION = "v1.29";
+const VERSION = "v1.30";
 
-// Noms sous lesquels on range les données dans la mémoire du téléphone
-const CLE_STOCKAGE = "mes-listes";
+// Noms sous lesquels on range les données dans la mémoire du téléphone.
+// Avant la v1.30, ils commençaient par « mes-listes » : migration.js
+// déplace les anciennes données sous les nouveaux noms.
+const CLE_STOCKAGE = "wodo";
 // Ancien historique « Supprimés » (titre, type, date des éléments supprimés),
 // retiré en v1.18 : la suppression est maintenant définitive. L'historique
 // déjà enregistré est effacé de l'appareil au démarrage.
@@ -235,7 +237,7 @@ function allerA(page) {
 
 // Prénom affiché sur l'accueil : gardé sur l'appareil (Réglages → Prénom),
 // « Womack » s'il n'a jamais été changé
-const CLE_PRENOM = "mes-listes-prenom";
+const CLE_PRENOM = "wodo-prenom";
 const PRENOM_PAR_DEFAUT = "Womack";
 function lirePrenom() {
   try {
@@ -1060,7 +1062,7 @@ champLien.addEventListener("change", () => {
 //    tant qu'on n'a pas touché « Ajouter ».
 // En cas d'échec (pas de relais, hors ligne, site qui refuse, pas de
 // recette), un message simple : on peut toujours ajouter à la main.
-const CLE_RELAIS = "mes-listes-relais";
+const CLE_RELAIS = "wodo-relais";
 const DELAI_IMPORT = 12000; // 12 s : le relais abandonne lui-même au bout de 8 s
 const TEXTE_BOUTON_IMPORT = "Importer depuis le lien";
 const MESSAGE_PAS_DE_RECETTE = "Je n'ai pas trouvé de recette sur cette page. Vous pouvez l'ajouter à la main.";
@@ -2061,7 +2063,9 @@ iaBrouillon.addEventListener("submit", async (evenement) => {
 // --- 6. Sauvegarde : exporter et importer --------------------
 // Numéro de version du format du fichier. Si un jour on change la forme
 // du fichier, on passera à 2 et on saura lire les anciens fichiers.
-const FORMAT_NOM = "mes-listes";
+const FORMAT_NOM = "wodo";
+// Les sauvegardes faites avant la v1.30 portent l'ancien nom : on les accepte
+const FORMATS_ACCEPTES = [FORMAT_NOM, "mes-listes"];
 // Version 1 : titre, type, fait. Version 2 : + année, affiche, identifiant TMDB
 // (facultatifs). Version 3 : + identifiant RAWG pour les jeux (facultatif).
 // Version 4 : + identifiant IMDb pour les films et séries (facultatif).
@@ -2191,7 +2195,7 @@ async function exporter() {
 // L'historique « supprimes » des anciens fichiers (versions 1 à 9) est ignoré.
 // On recopie seulement les champs connus, pour ne rien garder d'inattendu.
 function verifierFichier(donnees) {
-  if (typeof donnees !== "object" || donnees === null || donnees.format !== FORMAT_NOM) {
+  if (typeof donnees !== "object" || donnees === null || !FORMATS_ACCEPTES.includes(donnees.format)) {
     throw new Error("Ce fichier n'est pas une sauvegarde de Wodo.");
   }
   if (!Number.isInteger(donnees.version) || donnees.version < 1) {
@@ -2451,7 +2455,7 @@ fenetreImport.addEventListener("close", () => {
 // --- 7. La clé TMDB, et les appels (TMDB, relais pour les jeux) ---
 // Les clés sont rangées dans la mémoire de l'appareil (localStorage),
 // jamais dans un fichier du projet ni dans les exports.
-const CLE_TMDB = "mes-listes-cle-tmdb";
+const CLE_TMDB = "wodo-cle-tmdb";
 // Ancienne clé RAWG (jeux), remplacée par IGDB via le relais en v1.22 :
 // effacée de l'appareil
 try {

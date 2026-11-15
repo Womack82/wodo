@@ -14,25 +14,70 @@
 // Chargé avant app.js (voir index.html).
 // ============================================================
 
-const BASE_PHOTOS = "mes-listes-photos";
+const BASE_PHOTOS = "wodo-photos";
+// Nom de la base avant la v1.30 : ses photos sont recopiées dans la
+// nouvelle base au premier lancement, puis elle est effacée
+const ANCIENNE_BASE_PHOTOS = "mes-listes-photos";
 const MAGASIN_PHOTOS = "photos";
 const PREFIXE_PHOTO_LOCALE = "idb:";
 
-// Ouverture de la base (une seule fois)
+// Ouvre une base. creer = false : ne la crée pas si elle n'existe pas
+// (renvoie alors null)
+function ouvrirBase(nom, creer) {
+  return new Promise((ok, echec) => {
+    let absente = false;
+    const demande = indexedDB.open(nom, 1);
+    demande.onupgradeneeded = () => {
+      if (creer) {
+        demande.result.createObjectStore(MAGASIN_PHOTOS);
+      } else {
+        absente = true;
+        demande.transaction.abort(); // la base n'existait pas : on ne la crée pas
+      }
+    };
+    demande.onsuccess = () => ok(demande.result);
+    demande.onerror = () => (absente ? ok(null) : echec(demande.error || new Error("ouverture impossible")));
+    demande.onblocked = () => echec(new Error("base bloquée"));
+  });
+}
+
+// Recopie une à une les photos de l'ancienne base dans la nouvelle, puis
+// efface l'ancienne. En cas d'erreur, l'ancienne base est gardée intacte.
+async function migrerAnciennesPhotos(base) {
+  const ancienne = await ouvrirBase(ANCIENNE_BASE_PHOTOS, false);
+  if (!ancienne) return; // rien à recopier
+  try {
+    const ids = (await operationSur(ancienne, "readonly", (magasin) => magasin.getAllKeys())) || [];
+    for (const id of ids) {
+      const photo = await operationSur(ancienne, "readonly", (magasin) => magasin.get(id));
+      if (photo) await operationSur(base, "readwrite", (magasin) => magasin.put(photo, id));
+    }
+  } finally {
+    ancienne.close();
+  }
+  indexedDB.deleteDatabase(ANCIENNE_BASE_PHOTOS);
+}
+
+// Ouverture de la base (une seule fois), après le déplacement des photos.
+// Si le déplacement échoue, on continue avec l'ancienne base pour cette
+// fois : il sera retenté au prochain lancement.
 let promesseBasePhotos = null;
 function ouvrirBasePhotos() {
   if (!promesseBasePhotos) {
-    promesseBasePhotos = new Promise((ok, echec) => {
-      if (!window.indexedDB) {
-        echec(new Error("IndexedDB indisponible"));
-        return;
+    promesseBasePhotos = (async () => {
+      if (!window.indexedDB) throw new Error("IndexedDB indisponible");
+      const base = await ouvrirBase(BASE_PHOTOS, true);
+      try {
+        await migrerAnciennesPhotos(base);
+        return base;
+      } catch (erreur) {
+        console.error("Déplacement des photos impossible :", erreur);
+        const ancienne = await ouvrirBase(ANCIENNE_BASE_PHOTOS, false);
+        if (!ancienne) return base;
+        base.close();
+        return ancienne;
       }
-      const demande = indexedDB.open(BASE_PHOTOS, 1);
-      demande.onupgradeneeded = () => demande.result.createObjectStore(MAGASIN_PHOTOS);
-      demande.onsuccess = () => ok(demande.result);
-      demande.onerror = () => echec(demande.error || new Error("ouverture impossible"));
-      demande.onblocked = () => echec(new Error("base bloquée"));
-    }).catch((erreur) => {
+    })().catch((erreur) => {
       promesseBasePhotos = null; // on pourra réessayer plus tard
       throw erreur;
     });
@@ -42,7 +87,11 @@ function ouvrirBasePhotos() {
 
 // Une opération sur les photos ; renvoie son résultat une fois bien écrite
 async function operationPhotos(mode, action) {
-  const base = await ouvrirBasePhotos();
+  return operationSur(await ouvrirBasePhotos(), mode, action);
+}
+
+// Une opération sur une base donnée
+function operationSur(base, mode, action) {
   return new Promise((ok, echec) => {
     const transaction = base.transaction(MAGASIN_PHOTOS, mode);
     const demande = action(transaction.objectStore(MAGASIN_PHOTOS));
