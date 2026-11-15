@@ -323,8 +323,9 @@ h1, h2 { color: var(--texte); }
 @keyframes apparaitre-bas { from { opacity: 0; transform: translateY(16px); } }
 
 /* ---------- Barre du bas (flottante, sur toutes les pages) ---------- */
-/* Accueil, Films, Séries | + | Jeux, Livres, Notes : 7 colonnes,
-   le + au centre. Icônes seules (le nom est dans aria-label). */
+/* Accueil, Films, Séries | bouton + | Jeux, Livres : 5 colonnes
+   de même largeur (le + est donc un peu décalé du centre).
+   Icônes seules (le nom est dans aria-label). */
 .barre-bas {
   position: fixed;
   left: calc(16px + env(safe-area-inset-left));
@@ -332,7 +333,7 @@ h1, h2 { color: var(--texte); }
   bottom: var(--bas-barre);
   z-index: 20;
   display: grid;
-  grid-template-columns: repeat(3, 1fr) auto repeat(3, 1fr);
+  grid-template-columns: repeat(3, 1fr) auto repeat(2, 1fr);
   align-items: center;
   justify-items: center;
   max-width: 568px;

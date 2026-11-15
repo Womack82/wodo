@@ -108,20 +108,13 @@ const actionSupprimerFaites = document.getElementById("notes-supprimer-faites");
 // Tracé du crochet blanc dans un cercle coché
 const TRACE_CROCHET = "M7 12.5l3.2 3.2L17 9";
 
-// La page s'ouvre depuis Réglages → Notes, ou depuis le bouton Notes de
-// la barre du bas. depuisReglages : le retour ramène au menu Réglages.
-let notesDepuisReglages = false;
-const boutonRetourNotes = document.getElementById("notes-retour");
-
+// La page s'ouvre depuis Réglages → Notes
 document.getElementById("ligne-notes").addEventListener("click", () => {
   panneauReglages.close();
-  ouvrirNotes(true);
+  ouvrirNotes();
 });
-document.getElementById("onglet-notes").addEventListener("click", () => ouvrirNotes(false));
 
-function ouvrirNotes(depuisReglages) {
-  notesDepuisReglages = depuisReglages;
-  boutonRetourNotes.setAttribute("aria-label", depuisReglages ? "Retour aux réglages" : "Fermer les notes");
+function ouvrirNotes() {
   // « Terminées » repliée à chaque ouverture
   basculeNotesFaites.setAttribute("aria-expanded", "false");
   listeNotesFaites.hidden = true;
@@ -134,14 +127,13 @@ function ouvrirNotes(depuisReglages) {
   pageNotes.scrollTop = 0;
 }
 
-// Retour : on revient au menu Réglages (si on en vient), sinon à la page
+// Retour : on revient au menu Réglages
 function retourNotes() {
   pageNotes.close();
-  if (!notesDepuisReglages) return;
   afficherVue("menu");
   panneauReglages.showModal();
 }
-boutonRetourNotes.addEventListener("click", retourNotes);
+document.getElementById("notes-retour").addEventListener("click", retourNotes);
 pageNotes.addEventListener("cancel", (evenement) => {
   evenement.preventDefault(); // touche Échap : comme le bouton retour
   retourNotes();
