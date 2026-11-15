@@ -5,6 +5,9 @@ on coche la case `[x]`, on la déplace dans « Fait » et on fait un commit Git.
 
 ## À faire
 
+- [ ] Passer les recettes et cocktails dans Toque&Tonic : Wodo → Réglages → Sauvegarde → Exporter, puis Toque&Tonic → Réglages → Sauvegarde → Importer ; vérifier, puis Wodo → Réglages → Recettes et cocktails → Effacer
+- [ ] Après l'effacement : retirer de Wodo le code devenu inutile (recettes.js, ia.js, page de la fiche, réglage Gemini)
+
 - [ ] Trier la liste (à faire d'abord, ordre alphabétique…)
 - [ ] Ajouter une note à chaque élément (« recommandé par… », note sur 5)
 - [ ] Synchroniser la liste entre le PC et l'iPhone (stockage en ligne)
@@ -60,7 +63,7 @@ on coche la case `[x]`, on la déplace dans « Fait » et on fait un commit Git.
 - [x] v1.22 — Jeux : RAWG (en panne) remplacé par IGDB, interrogé uniquement par le relais Cloudflare (routes /igdb/recherche et /igdb/jeu ; jeton Twitch obtenu avec les secrets IGDB_CLIENT_ID et IGDB_CLIENT_SECRET, gardé en mémoire et renouvelé automatiquement). Résultats avec jaquette, année et plateformes ; les jeux ajoutés gardent titre, année, jaquette (affiche) et idIgdb ; les anciens jeux RAWG restent tels quels. Sans relais ou si IGDB ne répond pas : message simple et ajout manuel. Clé RAWG retirée des Réglages (et effacée de l'appareil), mention IGDB à la place de RAWG ; réglage « Relais (recettes et jeux) ». Sauvegarde au format 12. LISEZMOI-RELAIS.md : procédure Twitch et secrets Cloudflare
 - [x] v1.23 — Mode d'emploi du relais : l'URL de redirection Twitch doit être en https (`https://localhost`, ou l'adresse de l'app si refusée)
 - [x] v1.24 — Recettes et cocktails : bouton « Coller le lien copié » retiré pour le moment (il ne fonctionnait pas). On colle le lien à la main dans le champ « Lien » ; « Importer depuis le lien » et « Photos et texte (IA) » sont inchangés
-- [ ] Remettre un bouton « Coller le lien copié » qui fonctionne sur iPhone (l'ancien code est dans l'historique Git, avant la v1.24)
+- [ ] (déplacé dans le TODO de Toque&Tonic) Remettre un bouton « Coller le lien copié » qui fonctionne sur iPhone
 - [x] v1.25 — Recherche pendant la saisie : propose des titres dès le début d'un mot (« wit » → « The Witcher »), les 10 premiers rangés du plus récent au plus ancien (sans date à la fin). Films et séries : les 20 résultats les plus pertinents de TMDB, triés par date. Jeux : le relais cherche les noms dont un mot commence par le texte tapé (pas le milieu d'un mot), prend les 20 jeux les plus notés et les range par date — **relais à redéployer sur Cloudflare** (étape 3 de LISEZMOI-RELAIS.md)
 - [x] v1.26 — Menu du bouton + : catégories dans le même ordre que la barre du bas (Recette, Cocktail, Film, Série, Jeu)
 - [x] v1.27 — Numéro de version déplacé : il n'est plus sous le logo W de l'accueil, il s'affiche en haut du panneau Réglages, sous le titre
@@ -69,3 +72,4 @@ on coche la case `[x]`, on la déplace dans « Fait » et on fait un commit Git.
 - [x] v1.30 — Noms techniques « mes-listes » remplacés par « wodo » : données de l'appareil (liste, notes, prénom, clés, relais) et photos déplacées automatiquement au premier lancement ; sauvegardes au format « wodo » (les anciennes « mes-listes » s'importent toujours) ; le nettoyage du cache n'efface plus que les caches de Wodo (prépare l'app Recettes sur le même site)
 - [x] Dépôt GitHub renommé « mes-listes » → « wodo » : l'app est maintenant à https://womack82.github.io/wodo/
 - [x] iPhone : nouvelle icône installée depuis https://womack82.github.io/wodo/, sauvegarde importée (tout est là), clés, relais et prénom recollés
+- [x] v2.0 — Livres (type « Livre », « à lire ») : recherche Open Library pendant la saisie (gratuite, sans clé ; titre, auteur, année, couverture ; une seule édition par titre et auteur, dans l'ordre de pertinence d'Open Library), auteur sous le titre, lien « Voir sur Open Library ↗ », mention de la source ; sauvegarde au format 13. Recettes et cocktails passés dans l'app Toque&Tonic : retirés de l'accueil, de la barre, du menu + et des Réglages (IA Gemini) ; ceux qui restent sont dans Réglages → Recettes et cocktails, avec « Effacer » (fiches et photos, après confirmation). Barre du bas : Accueil, Films, Séries | + | Jeux, Livres, Notes. Relais renommé « Relais (jeux) »

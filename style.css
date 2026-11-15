@@ -147,9 +147,7 @@ h1, h2 { color: var(--texte); }
   color: var(--bleu);
 }
 
-/* ---------- Accueil : 5 carrés ---------- */
-/* Contenu centré ; presque pas de marge sur les côtés pour que
-   « Recettes » et « Cocktails » tiennent */
+/* ---------- Accueil : 4 carrés (Films, Séries, Jeux, Livres) ---------- */
 .carres { display: flex; gap: 8px; }
 .carre {
   flex: 1;
@@ -325,7 +323,7 @@ h1, h2 { color: var(--texte); }
 @keyframes apparaitre-bas { from { opacity: 0; transform: translateY(16px); } }
 
 /* ---------- Barre du bas (flottante, sur toutes les pages) ---------- */
-/* Accueil, Recettes, Cocktails | + | Films, Séries, Jeux : 7 colonnes,
+/* Accueil, Films, Séries | + | Jeux, Livres, Notes : 7 colonnes,
    le + au centre. Icônes seules (le nom est dans aria-label). */
 .barre-bas {
   position: fixed;
@@ -943,6 +941,10 @@ html.verrou body { overflow: hidden; }
   color: var(--texte);
 }
 #vue-cles > .aide { margin: 16px 4px 0; font-size: 14px; }
+#vue-fiches .liste { margin-bottom: 12px; }
+/* « Effacer les recettes et cocktails » : texte rouge, puis fond rouge à la confirmation */
+#bouton-effacer-fiches { color: var(--rouge); }
+#bouton-effacer-fiches.confirmer { background: var(--rouge); border-color: var(--rouge); color: white; }
 #formulaire-relais .etiquette,
 #formulaire-prenom .etiquette { display: block; margin: 0 4px 6px; }
 

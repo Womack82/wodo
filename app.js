@@ -4,9 +4,10 @@
 
 // Numéro de version affiché à côté du logo.
 // ⚠️ Doit toujours être le même que NOM_CACHE dans service-worker.js
-// On reste en v1 : chaque changement, quel qu'il soit, ajoute 1 au second
-// numéro (v1.1 → v1.2 → v1.3…). (Avant le 10/11/2026 : v10 à v15.1.)
-const VERSION = "v1.30";
+// Chaque changement, quel qu'il soit, ajoute 1 au second numéro
+// (v2.0 → v2.1 → v2.2…). v1.1 à v1.30 : avant la v2.0 (15/11/2026 : livres,
+// recettes et cocktails passés dans Toque&Tonic). Avant le 10/11/2026 : v10 à v15.1.
+const VERSION = "v2.0";
 
 // Noms sous lesquels on range les données dans la mémoire du téléphone.
 // Avant la v1.30, ils commençaient par « mes-listes » : migration.js
@@ -23,10 +24,12 @@ try {
 }
 
 // Emoji affiché devant chaque type
-const EMOJIS = { film: "🎬", serie: "📺", jeu: "🎮", recette: "🍳", cocktail: "🍸", autre: "📌" };
+const EMOJIS = { film: "🎬", serie: "📺", jeu: "🎮", livre: "📖", recette: "🍳", cocktail: "🍸", autre: "📌" };
 
 // Recettes et cocktails sont des FICHES à conserver : pas de case à cocher,
-// jamais « terminées ». Films, séries et jeux sont des listes « à faire ».
+// jamais « terminées ». Films, séries, jeux et livres sont des listes « à faire ».
+// Depuis la v2.0, les fiches vivent dans l'app Toque&Tonic : celles qui
+// restent ici sont seulement visibles dans Réglages → Recettes et cocktails.
 const FICHES = new Set(["recette", "cocktail"]);
 const estFiche = (type) => FICHES.has(type);
 
@@ -69,7 +72,7 @@ function migrerFiches() {
 }
 migrerFiches();
 
-// La page affichée : "accueil" ou une catégorie ("film", "serie", "jeu", "recette", "cocktail")
+// La page affichée : "accueil" ou une catégorie ("film", "serie", "jeu", "livre")
 let pageActive = "accueil";
 
 // On récupère les morceaux de la page dont on a besoin
@@ -89,7 +92,9 @@ const liste = document.getElementById("liste");
 const messageVide = document.getElementById("message-vide");
 const mentionTmdb = document.getElementById("mention-tmdb");
 const mentionIgdb = document.getElementById("mention-igdb");
-const onglets = document.querySelectorAll(".onglet");
+const mentionOpenLibrary = document.getElementById("mention-openlibrary");
+// (le bouton Notes de la barre est géré par notes.js)
+const onglets = document.querySelectorAll(".onglet[data-type]");
 // Dans le panneau Réglages
 const listeFaits = document.getElementById("liste-faits");
 const badgeFaits = document.getElementById("badge-faits");
@@ -97,16 +102,20 @@ const faitsVide = document.getElementById("faits-vide");
 const listeAutres = document.getElementById("liste-autres");
 const badgeAutres = document.getElementById("badge-autres");
 const ligneAutres = document.getElementById("ligne-autres");
+const listeFiches = document.getElementById("liste-fiches");
+const badgeFiches = document.getElementById("badge-fiches");
+const ligneFiches = document.getElementById("ligne-fiches");
 
 // Nom du type affiché sous le titre des cartes
-const NOMS_SIMPLES = { film: "Film", serie: "Série", jeu: "Jeu", recette: "Recette", cocktail: "Cocktail", autre: "Autre" };
+const NOMS_SIMPLES = { film: "Film", serie: "Série", jeu: "Jeu", livre: "Livre", recette: "Recette", cocktail: "Cocktail", autre: "Autre" };
 
 // Icônes des types, dessinées en SVG (24 × 24) pour pouvoir les colorer :
-// pellicule, écran, manette, bol avec vapeur, verre à cocktail, punaise
+// pellicule, écran, manette, livre ouvert, bol avec vapeur, verre à cocktail, punaise
 const ICONES_TYPES = {
   film: "M5 3h14a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2z M7 3v18 M17 3v18 M3 7.5h4 M3 12h18 M3 16.5h4 M17 7.5h4 M17 16.5h4",
   serie: "M4 7h16a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V9a2 2 0 0 1 2-2z M8 3l4 4 4-4",
   jeu: "M7 8h10a5 5 0 0 1 5 5v1a3.5 3.5 0 0 1-6.3 2.1L14.5 15h-5l-1.2 1.1A3.5 3.5 0 0 1 2 14v-1a5 5 0 0 1 5-5z M7.5 10.5v4 M5.5 12.5h4 M16 11.5h.01 M18 13.5h.01",
+  livre: "M12 6.5C10 5 7 4.5 3.5 5v13c3.5-.5 6.5 0 8.5 1.5 2-1.5 5-2 8.5-1.5V5C17 4.5 14 5 12 6.5z M12 6.5v13",
   recette: "M3 12h18a9 7.5 0 0 1-18 0z M8.5 21h7 M8 8.5c-1-1.2 1-2.3 0-3.5 M12 8.5c-1-1.2 1-2.3 0-3.5 M16 8.5c-1-1.2 1-2.3 0-3.5",
   cocktail: "M4 4h16l-8 9z M7 7.5h10 M12 13v7 M8 20h8 M16 2.5l-2 4",
   autre: "M9 3h6 M10 3v6l-3 4h10l-3-4V3 M12 13v8",
@@ -125,12 +134,12 @@ function creerIcone(trace, classe = "icone-svg") {
   return svg;
 }
 
-// Les 5 catégories de la navigation (« Autre » n'en fait plus partie :
-// ses anciens éléments sont gardés et visibles dans Réglages → Autres)
-const NOMS_PLURIELS = { film: "Films", serie: "Séries", jeu: "Jeux", recette: "Recettes", cocktail: "Cocktails" };
-// Petit texte d'une page catégorie : « 12 à voir », « 3 à jouer » ;
-// pour les fiches (recettes, cocktails) : « 8 fiches »
-const VERBES = { film: "à voir", serie: "à voir", jeu: "à jouer" };
+// Les 4 catégories de la navigation (« Autre » n'en fait plus partie :
+// ses anciens éléments sont gardés et visibles dans Réglages → Autres ;
+// recettes et cocktails : Réglages → Recettes et cocktails)
+const NOMS_PLURIELS = { film: "Films", serie: "Séries", jeu: "Jeux", livre: "Livres" };
+// Petit texte d'une page catégorie : « 12 à voir », « 3 à jouer », « 2 à lire »
+const VERBES = { film: "à voir", serie: "à voir", jeu: "à jouer", livre: "à lire" };
 
 // Date d'ajout d'un élément : son identifiant est l'heure de création
 // (Date.now()). Renvoie null si l'identifiant n'est pas une date.
@@ -151,27 +160,27 @@ function texteAjout(el) {
 }
 
 // --- 3. Afficher les pages et les listes ----------------------
-// Accueil : 5 carrés (nombre à faire ; nombre de fiches pour Recettes et
-// Cocktails) + 4 derniers ajoutés.
-// Page catégorie : les éléments à faire (ou toutes les fiches) de cette catégorie.
-// Panneau Réglages : terminés, anciens « Autre ».
+// Accueil : 4 carrés (nombre à faire) + 4 derniers ajoutés.
+// Page catégorie : les éléments à faire de cette catégorie.
+// Panneau Réglages : terminés, anciens « Autre », recettes et cocktails gardés.
 // animer = true : les cartes apparaissent en fondu, l'une après l'autre
 // (seulement en arrivant sur une page, pas après chaque coche).
 function afficher(animer = false) {
   const aFaire = elements.filter((el) => !el.fait);
   const faits = elements.filter((el) => el.fait);
   const autres = aFaire.filter((el) => el.type === "autre");
+  // (une fiche n'est jamais « faite » : aFaire contient toutes les fiches)
+  const fiches = aFaire.filter((el) => estFiche(el.type));
 
   // Carrés de l'accueil
-  // (une fiche n'est jamais « faite » : aFaire contient toutes les fiches)
   for (const carre of carres) {
     carre.querySelector(".carre-nombre").textContent =
       aFaire.filter((el) => el.type === carre.dataset.type).length;
   }
 
-  // Derniers ajoutés (les 5 catégories), du plus récent au plus ancien.
-  // Les anciens « Autre » n'y sont pas : ils restent dans Réglages.
-  const recents = aFaire.filter((el) => el.type !== "autre")
+  // Derniers ajoutés (les 4 catégories), du plus récent au plus ancien.
+  // Les anciens « Autre » et les fiches n'y sont pas : ils restent dans Réglages.
+  const recents = aFaire.filter((el) => Object.hasOwn(NOMS_PLURIELS, el.type))
     .sort((a, b) => (Number(b.id) || 0) - (Number(a.id) || 0))
     .slice(0, 4);
   listeRecents.replaceChildren(...recents.map((el) => creerCarte(el, true)));
@@ -187,14 +196,15 @@ function afficher(animer = false) {
       ? "Rien ici pour l'instant. Appuie sur + pour ajouter."
       : "Tout est fait ! 🎉";
     messageVide.hidden = visibles.length > 0;
-    entetePetit.textContent = estFiche(pageActive)
-      ? pluriel(visibles.length, "fiche")
-      : `${visibles.length} ${VERBES[pageActive]}`;
+    entetePetit.textContent = `${visibles.length} ${VERBES[pageActive]}`;
   }
 
   // Panneau Réglages
   listeFaits.replaceChildren(...faits.map((el) => creerCarte(el)));
   listeAutres.replaceChildren(...autres.map((el) => creerCarte(el)));
+  listeFiches.replaceChildren(...fiches.map((el) => creerCarte(el)));
+  badgeFiches.textContent = fiches.length;
+  ligneFiches.hidden = fiches.length === 0;
   badgeFaits.textContent = faits.length;
   badgeAutres.textContent = autres.length;
   ligneAutres.hidden = autres.length === 0;
@@ -228,9 +238,10 @@ function allerA(page) {
     onglet.classList.toggle("actif", actif);
     onglet.toggleAttribute("aria-current", actif);
   }
-  // Mentions TMDB (films, séries) ou IGDB (jeux) en bas de la page
+  // Mentions TMDB (films, séries), IGDB (jeux) ou Open Library (livres) en bas de la page
   mentionTmdb.hidden = page !== "film" && page !== "serie";
   mentionIgdb.hidden = page !== "jeu";
+  mentionOpenLibrary.hidden = page !== "livre";
   window.scrollTo(0, 0);
   afficher(true);
 }
@@ -282,10 +293,10 @@ function creerCarte(el, avecDate = false) {
   titre.className = "carte-titre";
   titre.textContent = el.titre;
 
-  // Ligne grise : type, et année si elle existe
+  // Ligne grise : type, année et auteur (livres) s'ils existent
   const details = document.createElement("span");
   details.className = "carte-details";
-  details.textContent = el.annee ? `${NOMS_SIMPLES[el.type]} · ${el.annee}` : NOMS_SIMPLES[el.type];
+  details.textContent = [NOMS_SIMPLES[el.type], el.annee, el.auteur].filter(Boolean).join(" · ");
 
   const textes = document.createElement("span");
   textes.className = "carte-textes";
@@ -362,6 +373,7 @@ function domaine(lien) {
 // infos (facultatif) :
 // - TMDB (films, séries) : { annee, affiche, idTmdb } (+ idImdb, cherché juste après)
 // - IGDB (jeux)          : { annee, affiche (jaquette), idIgdb } (anciens jeux RAWG : { annee, idRawg })
+// - Open Library (livres): { annee, affiche (couverture), auteur, idOpenLibrary }
 // - recette, cocktail    : { lien, note } (tous les deux facultatifs)
 //                          + les champs trouvés par « Importer » (CHAMPS_FICHE :
 //                          photos, ingrédients, étapes, portions, temps…)
@@ -378,6 +390,8 @@ function ajouter(titre, type, infos = null) {
     if (infos.idTmdb) el.idTmdb = infos.idTmdb;
     if (infos.idRawg) el.idRawg = infos.idRawg;
     if (infos.idIgdb) el.idIgdb = infos.idIgdb;
+    if (infos.auteur) el.auteur = infos.auteur;
+    if (infos.idOpenLibrary) el.idOpenLibrary = infos.idOpenLibrary;
     if (infos.lien) el.lien = infos.lien;
     if (infos.note) el.note = infos.note;
     if (estFiche(type)) {
@@ -395,8 +409,11 @@ function ajouter(titre, type, infos = null) {
   if (el.idTmdb) completerImdb(el);
 }
 
-// Retire les informations venues de TMDB, IGDB ou RAWG (affiche, année, identifiants)
+// Retire les informations venues de TMDB, IGDB, RAWG ou Open Library
+// (affiche, année, auteur, identifiants)
 function retirerInfosExternes(el) {
+  delete el.auteur;
+  delete el.idOpenLibrary;
   delete el.annee;
   delete el.affiche;
   delete el.idTmdb;
@@ -488,11 +505,12 @@ function supprimer(id) {
 }
 
 // --- 4 bis. Le panneau d'actions (monte du bas de l'écran) ---
-// S'ouvre quand on touche une carte : Voir sur IMDb, Modifier, Supprimer.
+// S'ouvre quand on touche une carte : Voir sur IMDb (ou Open Library), Modifier, Supprimer.
 const panneauActions = document.getElementById("panneau-actions");
 const actionsTitre = document.getElementById("actions-titre");
 const actionsBoutons = document.getElementById("actions-boutons");
 const actionsImdb = document.getElementById("actions-imdb");
+const actionsOpenLibrary = document.getElementById("actions-openlibrary");
 const actionsModifier = document.getElementById("actions-modifier");
 const actionsSupprimer = document.getElementById("actions-supprimer");
 const actionsEdition = document.getElementById("actions-edition");
@@ -525,12 +543,13 @@ let idActions = null;
 let minuteurConfirmation = null;
 
 // Le menu des types du panneau : « 🎬 Film », « 📺 Série »…
-// « Autre » n'est proposé que pour un élément qui est déjà « Autre »
-// (catégorie retirée : on ne peut plus en créer, mais on peut la garder).
+// « Autre », « Recette » et « Cocktail » ne sont proposés que pour un
+// élément qui est déjà de ce type (catégories retirées de Wodo : on ne
+// peut plus en créer, mais on peut les garder).
 function remplirTypes(typeActuel) {
   editionType.replaceChildren();
   for (const type of Object.keys(NOMS_SIMPLES)) {
-    if (type === "autre" && typeActuel !== "autre") continue;
+    if ((type === "autre" || estFiche(type)) && type !== typeActuel) continue;
     editionType.append(new Option(`${EMOJIS[type]} ${NOMS_SIMPLES[type]}`, type));
   }
 }
@@ -550,6 +569,9 @@ function ouvrirActions(id) {
   // Lien IMDb seulement pour les films et séries qui en ont un
   actionsImdb.hidden = !el.idImdb;
   if (el.idImdb) actionsImdb.href = `https://www.imdb.com/title/${el.idImdb}/`;
+  // Lien Open Library pour les livres qui en ont un
+  actionsOpenLibrary.hidden = !el.idOpenLibrary;
+  if (el.idOpenLibrary) actionsOpenLibrary.href = `https://openlibrary.org/works/${el.idOpenLibrary}`;
   // Recette ou cocktail : sa note sous le titre et « Ouvrir le lien ↗ » s'ils existent
   const recette = estFiche(el.type);
   actionsNote.textContent = recette && el.note ? el.note : "";
@@ -748,9 +770,10 @@ const VUES = {
   prenom: { titre: "Prénom", bloc: document.getElementById("vue-prenom") },
   faits: { titre: "Terminés", bloc: document.getElementById("vue-faits") },
   autres: { titre: "Anciens « Autre »", bloc: document.getElementById("vue-autres") },
+  fiches: { titre: "Recettes et cocktails", bloc: document.getElementById("vue-fiches") },
   sauvegarde: { titre: "Sauvegarde", bloc: document.getElementById("vue-sauvegarde") },
   cles: { titre: "Clés API", bloc: document.getElementById("vue-cles") },
-  relais: { titre: "Relais (recettes et jeux)", bloc: document.getElementById("vue-relais") },
+  relais: { titre: "Relais (jeux)", bloc: document.getElementById("vue-relais") },
   gemini: { titre: "IA (Gemini)", bloc: document.getElementById("vue-gemini") },
 };
 
@@ -808,7 +831,7 @@ const messageImport = document.getElementById("message-import");
 // Recette, cocktail : « Photos et texte (IA) »
 const boutonOuvrirIa = document.getElementById("bouton-ouvrir-ia");
 
-// Catégorie choisie dans le menu (film, serie, jeu, recette)
+// Catégorie choisie dans le menu (film, serie, jeu, livre)
 let categorieAjout = "film";
 // true quand la recherche de jeux (IGDB, via le relais) a échoué ou que le relais manque :
 // le calque passe en saisie manuelle jusqu'à sa fermeture
@@ -822,6 +845,7 @@ const TITRES_AJOUT = {
   film: "Ajouter un film",
   serie: "Ajouter une série",
   jeu: "Ajouter un jeu",
+  livre: "Ajouter un livre",
   recette: "Ajouter une recette",
   cocktail: "Ajouter un cocktail",
 };
@@ -829,6 +853,7 @@ const INDICATIONS = {
   film: "Nom du film",
   serie: "Nom de la série",
   jeu: "Nom du jeu",
+  livre: "Titre ou auteur du livre",
   recette: "Nom de la recette",
   cocktail: "Nom du cocktail",
 };
@@ -838,6 +863,7 @@ const MENTIONS = {
   film: "Données films et séries fournies par TMDB",
   serie: "Données films et séries fournies par TMDB",
   jeu: "Données jeux vidéo fournies par IGDB",
+  livre: "Données livres fournies par Open Library",
 };
 
 // Dernière ligne de la liste : « Ajouter « titre » tel quel », qui suit ce
@@ -893,7 +919,7 @@ function bloquerGlissement(panneau) {
 // Ouvre le calque de saisie pour une catégorie
 function ouvrirAjout(type) {
   categorieAjout = type;
-  const avecRecherche = sourcePourType(type) !== null; // film, série, jeu
+  const avecRecherche = sourcePourType(type) !== null; // film, série, jeu, livre
   ajoutIcone.replaceChildren(creerIcone(ICONES_TYPES[type]));
   ajoutTitre.textContent = TITRES_AJOUT[type];
   champTitre.placeholder = INDICATIONS[type];
@@ -2087,8 +2113,11 @@ const FORMATS_ACCEPTES = [FORMAT_NOM, "mes-listes"];
 // rangées dans IndexedDB après l'import.
 // Version 12 : jeux venus d'IGDB : identifiant « idIgdb » et jaquette dans « affiche »
 // (adresse images.igdb.com) ; les anciens jeux RAWG gardent « idRawg ».
-// L'app sait lire les douze. Les clés (TMDB, Gemini) n'y sont jamais.
-const FORMAT_VERSION = 12;
+// Version 13 : + livres (type « livre ») venus d'Open Library : auteur,
+// identifiant « idOpenLibrary » (OL…W) et couverture dans « affiche »
+// (adresse covers.openlibrary.org).
+// L'app sait lire les treize. Les clés (TMDB, Gemini) n'y sont jamais.
+const FORMAT_VERSION = 13;
 // Taille maximale d'une photo dans un fichier de sauvegarde (texte base64)
 const LONGUEUR_MAX_PHOTO_FICHIER = 5 * 1024 * 1024;
 
@@ -2249,15 +2278,29 @@ function verifierFichier(donnees) {
       if (el.type !== "jeu") throw new Error(`${numero} a un identifiant IGDB mais n'est pas un jeu.`);
       propre.idIgdb = el.idIgdb;
     }
+    // Infos Open Library (version 13, facultatives) : seulement pour les livres
+    if (el.idOpenLibrary !== undefined) {
+      if (typeof el.idOpenLibrary !== "string" || !MOTIF_ID_OPEN_LIBRARY.test(el.idOpenLibrary)) throw new Error(`${numero} a un identifiant Open Library invalide.`);
+      if (el.type !== "livre") throw new Error(`${numero} a un identifiant Open Library mais n'est pas un livre.`);
+      propre.idOpenLibrary = el.idOpenLibrary;
+    }
+    if (el.auteur !== undefined) {
+      if (typeof el.auteur !== "string" || el.auteur.length > LONGUEUR_MAX_AUTEUR) throw new Error(`${numero} a un auteur invalide.`);
+      if (el.type !== "livre") throw new Error(`${numero} a un auteur mais n'est pas un livre.`);
+      if (el.auteur.trim() !== "") propre.auteur = el.auteur.trim();
+    }
+    // Année : livres anciens acceptés (Open Library connaît des œuvres de l'Antiquité)
     if (el.annee !== undefined) {
-      if (!Number.isInteger(el.annee) || el.annee < 1800 || el.annee > 2200) throw new Error(`${numero} a une année invalide.`);
+      const anneeMin = el.type === "livre" ? -3000 : 1800;
+      if (!Number.isInteger(el.annee) || el.annee < anneeMin || el.annee > 2200) throw new Error(`${numero} a une année invalide.`);
       propre.annee = el.annee;
     }
-    // Affiche : TMDB (films, séries) ou jaquette IGDB (jeux)
+    // Affiche : TMDB (films, séries), jaquette IGDB (jeux) ou couverture Open Library (livres)
     if (el.affiche !== undefined) {
       const afficheTmdb = typeof el.affiche === "string" && el.affiche.startsWith(ADRESSE_AFFICHES);
       const jaquetteIgdb = typeof el.affiche === "string" && el.type === "jeu" && MOTIF_JAQUETTE_IGDB.test(el.affiche);
-      if (!afficheTmdb && !jaquetteIgdb) {
+      const couverture = typeof el.affiche === "string" && el.type === "livre" && MOTIF_COUVERTURE_OPEN_LIBRARY.test(el.affiche);
+      if (!afficheTmdb && !jaquetteIgdb && !couverture) {
         throw new Error(`${numero} a une adresse d'affiche invalide.`);
       }
       propre.affiche = el.affiche;
@@ -2600,8 +2643,8 @@ brancherCle("TMDB", CLE_TMDB, "cle", (cle) => appelerTmdb("/authentication", {},
   const afficherEtatRelais = () => {
     const adresse = lireCle(CLE_RELAIS);
     etatRelais.textContent = adresse
-      ? "✅ Un relais est enregistré sur cet appareil : l'import de recettes et la recherche de jeux sont activés."
-      : "Aucun relais enregistré sur cet appareil : l'import de recettes et la recherche de jeux sont désactivés (l'ajout à la main reste possible).";
+      ? "✅ Un relais est enregistré sur cet appareil : la recherche de jeux est activée."
+      : "Aucun relais enregistré sur cet appareil : la recherche de jeux est désactivée (l'ajout à la main reste possible).";
     champRelais.value = adresse;
     boutonEffacerRelais.hidden = !adresse;
   };
@@ -2621,7 +2664,7 @@ brancherCle("TMDB", CLE_TMDB, "cle", (cle) => appelerTmdb("/authentication", {},
     // On ne garde que le site et le chemin (pas de « ?… » ni de « #… »)
     localStorage.setItem(CLE_RELAIS, adresse.origin + adresse.pathname);
     afficherEtatRelais();
-    afficherMessage("Adresse enregistrée. L'import de recettes et la recherche de jeux sont activés.", true, messageRelais);
+    afficherMessage("Adresse enregistrée. La recherche de jeux est activée.", true, messageRelais);
   });
 
   boutonEffacerRelais.addEventListener("click", () => {
@@ -2631,6 +2674,38 @@ brancherCle("TMDB", CLE_TMDB, "cle", (cle) => appelerTmdb("/authentication", {},
   });
 
   afficherEtatRelais();
+}
+
+// --- 7 ter ter. Les recettes et cocktails gardés (avant la v2.0) ---
+// Ils vivent maintenant dans Toque&Tonic. « Effacer » : premier appui →
+// demande de confirmation pendant 4 secondes ; deuxième appui → les fiches
+// et leurs photos sont effacées de Wodo.
+{
+  const boutonEffacerFiches = document.getElementById("bouton-effacer-fiches");
+  const messageFiches = document.getElementById("message-fiches");
+  const TEXTE_EFFACER = boutonEffacerFiches.textContent;
+  let minuteurFiches = null;
+  const remettreBouton = () => {
+    clearTimeout(minuteurFiches);
+    boutonEffacerFiches.textContent = TEXTE_EFFACER;
+    boutonEffacerFiches.classList.remove("confirmer");
+  };
+  boutonEffacerFiches.addEventListener("click", async () => {
+    if (!boutonEffacerFiches.classList.contains("confirmer")) {
+      boutonEffacerFiches.textContent = "Sûr ? Ils sont bien dans Toque&Tonic ? Toucher pour effacer";
+      boutonEffacerFiches.classList.add("confirmer");
+      minuteurFiches = setTimeout(remettreBouton, 4000);
+      return;
+    }
+    remettreBouton();
+    const nombre = elements.filter((el) => estFiche(el.type)).length;
+    elements = elements.filter((el) => !estFiche(el.type));
+    sauvegarder();
+    afficher();
+    photosEnTexte.clear();
+    await nettoyerPhotos(); // les photos qu'aucun élément n'utilise plus
+    afficherMessage(`${pluriel(nombre, "fiche")} effacée${nombre > 1 ? "s" : ""} de Wodo.`, true, messageFiches);
+  });
 }
 
 // --- 7 ter bis. Le prénom de l'accueil ---------------------------
@@ -2854,6 +2929,48 @@ function convertirResultatIgdb(r) {
   };
 }
 
+// Livres : Open Library (gratuit, sans clé, appelé directement depuis l'app).
+// On ne garde que : titre, premier auteur, année de 1re parution, couverture
+// et identifiant de l'œuvre (« OL45804W »).
+const DELAI_OPEN_LIBRARY = 10000; // Open Library est parfois lent : 10 s au plus
+const MOTIF_ID_OPEN_LIBRARY = /^OL\d{1,12}W$/;
+const MOTIF_COUVERTURE_OPEN_LIBRARY = /^https:\/\/covers\.openlibrary\.org\/b\/id\/\d{1,12}-M\.jpg$/;
+const LONGUEUR_MAX_AUTEUR = 200;
+
+async function appelerOpenLibrary(texte) {
+  const adresse = new URL("https://openlibrary.org/search.json");
+  adresse.searchParams.set("q", texte);
+  adresse.searchParams.set("fields", "key,title,author_name,first_publish_year,cover_i");
+  adresse.searchParams.set("limit", "20");
+  adresse.searchParams.set("lang", "fr"); // éditions françaises en priorité quand elles existent
+  const controle = new AbortController();
+  const minuteur = setTimeout(() => controle.abort(), DELAI_OPEN_LIBRARY);
+  try {
+    const reponse = await fetch(adresse, { signal: controle.signal, credentials: "omit" });
+    if (!reponse.ok) throw new Error(`Open Library a répondu ${reponse.status}`);
+    const donnees = await reponse.json();
+    if (!donnees || !Array.isArray(donnees.docs)) throw new Error("réponse illisible");
+    return donnees.docs;
+  } finally {
+    clearTimeout(minuteur);
+  }
+}
+
+// Transforme un résultat Open Library en { titre, type, annee, affiche,
+// auteur, idOpenLibrary } — même forme que pour TMDB et IGDB
+function convertirResultatOpenLibrary(r) {
+  const id = typeof r.key === "string" ? r.key.replace(/^\/works\//, "") : "";
+  const auteur = Array.isArray(r.author_name) && typeof r.author_name[0] === "string" ? r.author_name[0].trim() : "";
+  return {
+    titre: typeof r.title === "string" ? r.title.trim().slice(0, 200) : "",
+    type: "livre",
+    annee: Number.isInteger(r.first_publish_year) && r.first_publish_year >= -3000 && r.first_publish_year <= 2200 ? r.first_publish_year : null,
+    affiche: Number.isInteger(r.cover_i) && r.cover_i > 0 ? `https://covers.openlibrary.org/b/id/${r.cover_i}-M.jpg` : null,
+    auteur: auteur.slice(0, LONGUEUR_MAX_AUTEUR),
+    idOpenLibrary: MOTIF_ID_OPEN_LIBRARY.test(id) ? id : null,
+  };
+}
+
 // Ce qui change d'un service à l'autre pour la recherche
 const SOURCES = {
   tmdb: {
@@ -2893,6 +3010,27 @@ const SOURCES = {
         .slice(0, RESULTATS_AFFICHES);
     },
   },
+  openLibrary: {
+    nom: "Open Library",
+    sansCle: true, // rien à régler : la recherche marche tout de suite
+    // Gardés dans l'ordre de pertinence d'Open Library (pas par date : un
+    // même livre existe souvent en plusieurs éditions et traductions, et
+    // l'œuvre connue doit rester en tête). Un seul résultat par titre et
+    // auteur (les éditions en double sont retirées).
+    chercher: async (texte) => {
+      const vus = new Set();
+      return (await appelerOpenLibrary(texte))
+        .map(convertirResultatOpenLibrary)
+        .filter((r) => {
+          if (!r.titre || !r.idOpenLibrary) return false;
+          const cle = `${r.titre.toLowerCase()}|${r.auteur.toLowerCase()}`;
+          if (vus.has(cle)) return false;
+          vus.add(cle);
+          return true;
+        })
+        .slice(0, RESULTATS_AFFICHES);
+    },
+  },
 };
 // Nombre de propositions affichées sous le champ titre
 const RESULTATS_AFFICHES = 10;
@@ -2901,6 +3039,7 @@ const RESULTATS_AFFICHES = 10;
 function sourcePourType(type) {
   if (type === "film" || type === "serie") return SOURCES.tmdb;
   if (type === "jeu") return SOURCES.igdb;
+  if (type === "livre") return SOURCES.openLibrary;
   return null;
 }
 
@@ -2941,7 +3080,7 @@ function passerJeuxEnManuel(relaisAbsent) {
   if (relaisAbsent) {
     const indication = document.createElement("span");
     indication.className = "indication";
-    indication.textContent = "Adresse du relais à renseigner dans Réglages → Relais (recettes et jeux).";
+    indication.textContent = "Adresse du relais à renseigner dans Réglages → Relais (jeux).";
     etatRecherche.append(indication);
   }
   ajoutDirect.hidden = false;
@@ -2955,7 +3094,7 @@ async function rechercher() {
   // Jeux en saisie manuelle : on garde le message, plus d'appel au relais
   if (type === "jeu" && rechercheJeuxIndisponible) return;
 
-  // La recherche concerne les films, séries et jeux, à partir de 2 lettres
+  // La recherche concerne les films, séries, jeux et livres, à partir de 2 lettres
   const source = sourcePourType(type);
   if (!source || texte.length < 2) {
     masquerRecherche();
@@ -2970,7 +3109,7 @@ async function rechercher() {
     passerJeuxEnManuel(false);
     return;
   }
-  if (source.lireCle() === "") {
+  if (!source.sansCle && source.lireCle() === "") {
     afficherEtatRecherche(`Recherche ${source.nom} désactivée : ajoute ta clé dans Réglages → Clés API. Tu peux aussi ajouter le titre à la main.`);
     return;
   }
@@ -2994,7 +3133,7 @@ async function rechercher() {
       return;
     }
     afficherEtatRecherche(
-      cleRefusee(erreur)
+      !source.sansCle && cleRefusee(erreur)
         ? `${source.nom} refuse ta clé. Vérifie-la dans Réglages → Clés API. Tu peux ajouter le titre à la main.`
         : "Recherche impossible (connexion ?). Tu peux ajouter le titre à la main."
     );
@@ -3025,8 +3164,9 @@ async function rechercher() {
 
     const details = document.createElement("span");
     details.className = "details";
-    // « Jeu · 2015 · PC, PlayStation 4 » (plateformes : jeux seulement)
-    details.textContent = [NOMS_SIMPLES[res.type], res.annee, (res.plateformes || []).join(", ")]
+    // « Jeu · 2015 · PC, PlayStation 4 » (plateformes : jeux seulement) ;
+    // « Livre · 2004 · Alain Damasio » (auteur : livres seulement)
+    details.textContent = [NOMS_SIMPLES[res.type], res.annee, res.auteur, (res.plateformes || []).join(", ")]
       .filter(Boolean).join(" · ");
 
     const textes = document.createElement("span");

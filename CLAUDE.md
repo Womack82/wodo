@@ -2,8 +2,16 @@
 
 ## Le projet
 
-- Petite web app installable (PWA) pour tenir des listes : films, séries,
-  jeux, recettes et autres. Son nom affiché est **Wodo** (depuis la v1.21).
+- Petite web app installable (PWA) pour tenir des listes à faire : films,
+  séries, jeux et livres. Son nom affiché est **Wodo** (depuis la v1.21).
+- Depuis la v2.0 (15/11/2026), les recettes et cocktails ont leur propre
+  app, **Toque&Tonic** (dossier `../Toque&Tonic`,
+  https://womack82.github.io/toque-tonic/), née d'une copie de Wodo v1.30.
+  Wodo ne permet plus d'en ajouter ; celles qui restent sont visibles dans
+  Réglages → Recettes et cocktails, avec un bouton pour les effacer. Le code
+  des fiches (recettes.js, ia.js, page de la fiche) est encore là pour ça.
+  Une correction du code commun n'est pas reportée automatiquement dans
+  l'autre app.
 - Depuis la v1.30, les noms techniques commencent par « wodo » : clés de
   la mémoire (localStorage), base des photos (IndexedDB « wodo-photos »),
   format des sauvegardes (`format: "wodo"`), nom du cache (« wodo-v… »).
@@ -32,19 +40,20 @@
   l'accord de l'utilisateur (demande faite le 15/11/2026). Le site GitHub
   Pages se met alors à jour tout seul.
 - Ne mets jamais une clé API dans un fichier suivi par Git sans le dire
-  clairement à l'utilisateur. Aujourd'hui, les clés TMDB et RAWG sont gardées
-  uniquement dans la mémoire de l'appareil (localStorage).
+  clairement à l'utilisateur. Aujourd'hui, la clé TMDB et l'adresse du relais
+  sont gardées uniquement dans la mémoire de l'appareil (localStorage).
+  Open Library (livres) n'a pas besoin de clé.
 
 ## Version et cache
 
 - À chaque modification, change la version du cache (`NOM_CACHE`) dans
   `service-worker.js`. Sinon, le téléphone continue d'utiliser l'ancienne copie.
 - Change en même temps `VERSION` en haut de `app.js` : c'est le numéro affiché
-  à côté du titre, et il doit rester identique à celui du cache.
-- Numérotation : on reste en **v1**. Chaque changement, quel qu'il soit
+  en haut des Réglages, et il doit rester identique à celui du cache.
+- Numérotation : depuis le 15/11/2026, on est en **v2** (v2.0 : livres, et
+  recettes passées dans Toque&Tonic). Chaque changement, quel qu'il soit
   (nouvelle demande ou retouche), ajoute 1 au second numéro :
-  v1.1 → v1.2 → v1.3… (les anciens numéros v10 à v15.1 datent d'avant
-  cette règle).
+  v2.0 → v2.1 → v2.2… (avant : v1.1 à v1.30, et encore avant v10 à v15.1).
 
 ## Apparence
 

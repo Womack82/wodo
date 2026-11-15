@@ -1,7 +1,7 @@
 {
   "name": "Wodo",
   "short_name": "Wodo",
-  "description": "Films, séries, jeux et recettes à ne pas oublier",
+  "description": "Films, séries, jeux et livres à ne pas oublier",
   "start_url": "./",
   "display": "standalone",
   "background_color": "#0a2342",

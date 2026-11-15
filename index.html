@@ -46,17 +46,9 @@
 
     <!-- Page d'accueil -->
     <section id="page-accueil">
-      <!-- 5 carrés : nombre d'éléments à faire (Films, Séries, Jeux) ou de
-           fiches (Recettes, Cocktails) ; un appui ouvre la page -->
-
-      <!-- Même ordre que la barre du bas : Recettes, Cocktails, Films, Séries, Jeux -->
+      <!-- 4 carrés : nombre d'éléments à faire ; un appui ouvre la page.
+           Même ordre que la barre du bas : Films, Séries, Jeux, Livres -->
       <div class="carres">
-        <button type="button" class="carre verre" data-type="recette">
-          <span class="carre-pastille"></span><span class="carre-nombre">0</span><span class="carre-libelle">Recettes</span>
-        </button>
-        <button type="button" class="carre verre" data-type="cocktail">
-          <span class="carre-pastille"></span><span class="carre-nombre">0</span><span class="carre-libelle">Cocktails</span>
-        </button>
         <button type="button" class="carre verre" data-type="film">
           <span class="carre-pastille"></span><span class="carre-nombre">0</span><span class="carre-libelle">Films</span>
         </button>
@@ -66,6 +58,9 @@
         <button type="button" class="carre verre" data-type="jeu">
           <span class="carre-pastille"></span><span class="carre-nombre">0</span><span class="carre-libelle">Jeux</span>
         </button>
+        <button type="button" class="carre verre" data-type="livre">
+          <span class="carre-pastille"></span><span class="carre-nombre">0</span><span class="carre-libelle">Livres</span>
+        </button>
       </div>
 
       <h2 class="titre-section">Derniers ajoutés</h2>
@@ -73,13 +68,13 @@
       <p id="recents-vide" class="aide vide" hidden>Rien à faire pour l'instant. Appuie sur + pour ajouter.</p>
     </section>
 
-    <!-- Page d'une catégorie (Films, Séries, Jeux, Recettes ou Cocktails) -->
+    <!-- Page d'une catégorie (Films, Séries, Jeux ou Livres) -->
     <section id="page-categorie" hidden>
       <ul id="liste" class="liste"></ul>
       <p id="message-vide" class="aide vide" hidden></p>
 
-      <!-- Mentions des sources : TMDB (exigée par ses conditions d'utilisation)
-           et IGDB (jeux) -->
+      <!-- Mentions des sources : TMDB (exigée par ses conditions d'utilisation),
+           IGDB (jeux) et Open Library (livres) -->
       <footer id="mention-tmdb" class="mentions" hidden>
         <a href="https://www.themoviedb.org/" target="_blank" rel="noopener">
           <img src="icons/tmdb.svg" alt="TMDB" width="120" height="16">
@@ -91,24 +86,31 @@
         <p>Jeux vidéo et jaquettes : données fournies par
           <a href="https://www.igdb.com/" target="_blank" rel="noopener">IGDB</a>.</p>
       </footer>
+      <footer id="mention-openlibrary" class="mentions" hidden>
+        <p>Livres et couvertures : données fournies par
+          <a href="https://openlibrary.org/" target="_blank" rel="noopener">Open Library</a>.</p>
+      </footer>
     </section>
   </main>
 
   <!-- Barre du bas, flottante, sur toutes les pages, icônes seules :
-       Accueil, Recettes, Cocktails | bouton + | Films, Séries, Jeux -->
+       Accueil, Films, Séries | bouton + | Jeux, Livres, Notes -->
   <nav class="barre-bas" aria-label="Navigation">
     <button type="button" id="bouton-accueil" class="bouton-accueil" aria-label="Accueil">
       <svg viewBox="0 0 24 24" class="icone-svg" aria-hidden="true"><path d="M3.5 11 12 3.8l8.5 7.2 M5.5 9.5V20h4.8v-5.5h3.4V20h4.8V9.5"/></svg>
     </button>
-    <button type="button" class="onglet" data-type="recette" aria-label="Recettes"><span class="onglet-icone"></span></button>
-    <button type="button" class="onglet" data-type="cocktail" aria-label="Cocktails"><span class="onglet-icone"></span></button>
+    <button type="button" class="onglet" data-type="film" aria-label="Films"><span class="onglet-icone"></span></button>
+    <button type="button" class="onglet" data-type="serie" aria-label="Séries"><span class="onglet-icone"></span></button>
     <!-- Accueil : ouvre le menu des catégories. Page catégorie : ouvre la saisie -->
     <button type="button" id="bouton-ajouter" class="bouton-plus" aria-label="Ajouter un élément">
       <svg viewBox="0 0 24 24" class="icone-svg" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>
     </button>
-    <button type="button" class="onglet" data-type="film" aria-label="Films"><span class="onglet-icone"></span></button>
-    <button type="button" class="onglet" data-type="serie" aria-label="Séries"><span class="onglet-icone"></span></button>
     <button type="button" class="onglet" data-type="jeu" aria-label="Jeux"><span class="onglet-icone"></span></button>
+    <button type="button" class="onglet" data-type="livre" aria-label="Livres"><span class="onglet-icone"></span></button>
+    <!-- Notes : ouvre la page Notes (la même que Réglages → Notes) -->
+    <button type="button" id="onglet-notes" class="onglet" aria-label="Notes">
+      <span class="onglet-icone"><svg viewBox="0 0 24 24" class="icone-svg" aria-hidden="true"><path d="M7 3h10a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2z M9 8h6 M9 12h6 M9 16h3"/></svg></span>
+    </button>
   </nav>
 
   <!-- Panneau Réglages : descend du haut, sur un voile sombre.
@@ -165,6 +167,16 @@
           <span id="badge-autres" class="badge">0</span>
           <svg viewBox="0 0 24 24" class="icone-svg chevron" aria-hidden="true"><path d="M9 5l7 7-7 7"/></svg>
         </button>
+        <!-- Recettes et cocktails passés dans Toque&Tonic : visible seulement s'il en reste -->
+        <button type="button" id="ligne-fiches" class="ligne-reglage" data-vue="fiches" hidden>
+          <span class="ligne-icone"><svg viewBox="0 0 24 24" class="icone-svg" aria-hidden="true"><path d="M3 12h18a9 7.5 0 0 1-18 0z M8.5 21h7 M8 8.5c-1-1.2 1-2.3 0-3.5 M12 8.5c-1-1.2 1-2.3 0-3.5 M16 8.5c-1-1.2 1-2.3 0-3.5"/></svg></span>
+          <span class="ligne-textes">
+            <span class="ligne-titre">Recettes et cocktails</span>
+            <span class="ligne-sous-titre">Passés dans Toque&amp;Tonic, à effacer d'ici</span>
+          </span>
+          <span id="badge-fiches" class="badge">0</span>
+          <svg viewBox="0 0 24 24" class="icone-svg chevron" aria-hidden="true"><path d="M9 5l7 7-7 7"/></svg>
+        </button>
         <button type="button" class="ligne-reglage" data-vue="sauvegarde">
           <span class="ligne-icone"><svg viewBox="0 0 24 24" class="icone-svg" aria-hidden="true"><path d="M12 4v11M7 10l5 5 5-5M5 20h14"/></svg></span>
           <span class="ligne-textes">
@@ -184,21 +196,12 @@
         <button type="button" class="ligne-reglage" data-vue="relais">
           <span class="ligne-icone"><svg viewBox="0 0 24 24" class="icone-svg" aria-hidden="true"><path d="M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1.2 1.2 M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1.2-1.2"/></svg></span>
           <span class="ligne-textes">
-            <span class="ligne-titre">Relais (recettes et jeux)</span>
-            <span class="ligne-sous-titre">Import de recettes, recherche de jeux</span>
+            <span class="ligne-titre">Relais (jeux)</span>
+            <span class="ligne-sous-titre">Recherche de jeux vidéo (IGDB)</span>
           </span>
           <svg viewBox="0 0 24 24" class="icone-svg chevron" aria-hidden="true"><path d="M9 5l7 7-7 7"/></svg>
         </button>
-        <button type="button" class="ligne-reglage" data-vue="gemini">
-          <!-- Étincelles -->
-          <span class="ligne-icone"><svg viewBox="0 0 24 24" class="icone-svg" aria-hidden="true"><path d="M10 3l1.8 5.2L17 10l-5.2 1.8L10 17l-1.8-5.2L3 10l5.2-1.8z M18 14l.9 2.1L21 17l-2.1.9L18 20l-.9-2.1L15 17l2.1-.9z"/></svg></span>
-          <span class="ligne-textes">
-            <span class="ligne-titre">IA (Gemini)</span>
-            <span class="ligne-sous-titre">Clé et modèle pour l'ajout par photos et texte</span>
-          </span>
-          <svg viewBox="0 0 24 24" class="icone-svg chevron" aria-hidden="true"><path d="M9 5l7 7-7 7"/></svg>
-        </button>
-        <!-- Mentions des sources : TMDB (exigée) et IGDB -->
+        <!-- Mentions des sources : TMDB (exigée), IGDB et Open Library -->
         <footer class="mentions">
           <a href="https://www.themoviedb.org/" target="_blank" rel="noopener">
             <img src="icons/tmdb.svg" alt="TMDB" width="120" height="16">
@@ -206,6 +209,8 @@
           <p lang="en">This product uses the TMDB API but is not endorsed or certified by TMDB.</p>
           <p>Jeux vidéo : données fournies par
             <a href="https://www.igdb.com/" target="_blank" rel="noopener">IGDB</a>.</p>
+          <p>Livres : données fournies par
+            <a href="https://openlibrary.org/" target="_blank" rel="noopener">Open Library</a>.</p>
         </footer>
       </div>
 
@@ -226,6 +231,23 @@
           </div>
           <p id="message-prenom" class="message" role="status" hidden></p>
         </form>
+      </div>
+
+      <!-- Recettes et cocktails : depuis la v2.0, ils vivent dans Toque&Tonic.
+           Ceux qui restent ici sont visibles, et peuvent être effacés d'un coup. -->
+      <div id="vue-fiches" class="sauvegarde" hidden>
+        <p class="aide">
+          Les recettes et cocktails ont maintenant leur propre app,
+          Toque&amp;Tonic (https://womack82.github.io/toque-tonic/). Pour les y
+          passer : Sauvegarde → Exporter ici, puis Importer dans Toque&amp;Tonic.
+          Quand tu as vérifié qu'ils y sont tous (avec leurs photos), tu peux
+          les effacer de Wodo.
+        </p>
+        <ul id="liste-fiches" class="liste"></ul>
+        <div class="boutons-sauvegarde">
+          <button type="button" id="bouton-effacer-fiches">Effacer les recettes et cocktails de Wodo</button>
+        </div>
+        <p id="message-fiches" class="message" role="status" hidden></p>
       </div>
 
       <!-- Autres : éléments « Autre » à faire (cochables, modifiables) -->
@@ -285,8 +307,8 @@
       <div id="vue-relais" hidden>
         <form id="formulaire-relais" class="sauvegarde">
           <p class="aide">
-            Adresse du relais qui permet d'importer une recette ou un cocktail
-            depuis un lien, et de chercher les jeux vidéo (IGDB). Mode d'emploi :
+            Adresse du relais qui permet de chercher les jeux vidéo (IGDB).
+            Toque&amp;Tonic l'utilise aussi pour importer des recettes. Mode d'emploi :
             relais/LISEZMOI-RELAIS.md. Elle est gardée uniquement dans la mémoire
             de cet appareil : jamais envoyée sur GitHub, jamais mise dans les exports.
           </p>
@@ -338,6 +360,7 @@
       <p id="actions-note" class="actions-note" hidden></p>
       <div id="actions-boutons" class="boutons-actions">
         <a id="actions-imdb" class="bouton-action" target="_blank" rel="noopener" hidden>Voir sur IMDb ↗</a>
+        <a id="actions-openlibrary" class="bouton-action" target="_blank" rel="noopener" hidden>Voir sur Open Library ↗</a>
         <a id="actions-lien" class="bouton-action" target="_blank" rel="noopener" hidden>Ouvrir le lien ↗</a>
         <button type="button" id="actions-modifier" class="bouton-action">Modifier</button>
         <button type="button" id="actions-supprimer" class="bouton-action supprimer">Supprimer</button>
@@ -647,17 +670,16 @@
     </div>
   </dialog>
 
-  <!-- Menu des catégories (bouton + de l'accueil) : 5 boutons ronds dans une
+  <!-- Menu des catégories (bouton + de l'accueil) : 4 boutons ronds dans une
        carte en verre au-dessus de la barre, et une copie du bouton + qui
        pivote et devient une croix -->
   <dialog id="menu-categories" class="menu-categories" aria-label="Choisir une catégorie">
     <div class="menu-carte verre-flou" tabindex="-1" autofocus>
       <!-- Même ordre que la barre du bas -->
-      <button type="button" class="choix-menu" data-type="recette"><span class="rond-menu"></span>Recette</button>
-      <button type="button" class="choix-menu" data-type="cocktail"><span class="rond-menu"></span>Cocktail</button>
       <button type="button" class="choix-menu" data-type="film"><span class="rond-menu"></span>Film</button>
       <button type="button" class="choix-menu" data-type="serie"><span class="rond-menu"></span>Série</button>
       <button type="button" class="choix-menu" data-type="jeu"><span class="rond-menu"></span>Jeu</button>
+      <button type="button" class="choix-menu" data-type="livre"><span class="rond-menu"></span>Livre</button>
     </div>
     <button type="button" id="menu-fermer" class="bouton-plus bouton-croix" aria-label="Fermer le menu">
       <svg viewBox="0 0 24 24" class="icone-svg" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>
@@ -710,7 +732,7 @@
                   autocapitalize="sentences" placeholder="Note (facultatif)"></textarea>
       </div>
 
-      <!-- Film, Série, Jeu : résultats de la recherche TMDB / IGDB (remplis par
+      <!-- Film, Série, Jeu, Livre : résultats de la recherche TMDB / IGDB / Open Library (remplis par
            app.js), puis « Ajouter « titre » tel quel », puis la source des données -->
       <div id="zone-resultats" class="feuille-defile">
         <p id="etat-recherche" class="aide" hidden></p>
