@@ -64,3 +64,4 @@ on coche la case `[x]`, on la déplace dans « Fait » et on fait un commit Git.
 - [x] v1.25 — Recherche pendant la saisie : propose des titres dès le début d'un mot (« wit » → « The Witcher »), les 10 premiers rangés du plus récent au plus ancien (sans date à la fin). Films et séries : les 20 résultats les plus pertinents de TMDB, triés par date. Jeux : le relais cherche les noms dont un mot commence par le texte tapé (pas le milieu d'un mot), prend les 20 jeux les plus notés et les range par date — **relais à redéployer sur Cloudflare** (étape 3 de LISEZMOI-RELAIS.md)
 - [x] v1.26 — Menu du bouton + : catégories dans le même ordre que la barre du bas (Recette, Cocktail, Film, Série, Jeu)
 - [x] v1.27 — Numéro de version déplacé : il n'est plus sous le logo W de l'accueil, il s'affiche en haut du panneau Réglages, sous le titre
+- [x] v1.28 — Logo W de l'en-tête déplacé à gauche de « Bonjour Womack », en plus petit (40 px de large au lieu de 58)

@@ -97,8 +97,8 @@ h1, h2 { color: var(--texte); }
 }
 
 /* ---------- En-tête ---------- */
-/* Gauche : « Bonjour » / « Womack » (ou nombre / catégorie) ; centre : logo
-   en filigrane ; droite : bouton Réglages */
+/* Gauche : logo W puis « Bonjour » / « Womack » (ou nombre / catégorie) ;
+   droite : bouton Réglages */
 .entete {
   position: relative;
   display: flex;
@@ -110,7 +110,9 @@ h1, h2 { color: var(--texte); }
   padding-top: max(54px, calc(env(safe-area-inset-top) + 10px));
   margin-bottom: 20px;
 }
-.entete-textes { position: relative; z-index: 1; min-width: 0; }
+/* margin-right: auto pousse le bouton Réglages tout à droite
+   et garde le logo collé aux textes */
+.entete-textes { position: relative; z-index: 1; min-width: 0; margin-right: auto; }
 .entete-petit { margin: 0; font-size: 14px; line-height: 1.2; color: var(--gris); }
 .entete-grand {
   margin: 0;
@@ -121,16 +123,13 @@ h1, h2 { color: var(--texte); }
   white-space: nowrap;
 }
 
-/* Logo W : centré sur la largeur de l'écran, un peu remonté, pâli à 40 % */
+/* Logo W : à gauche de « Bonjour Womack », plus petit, pâli à 40 % */
 .titre-app {
-  position: absolute;
-  left: 50%;
-  bottom: 24px;
-  transform: translate(-50%, calc(50% - 8px));
+  flex-shrink: 0;
   margin: 0;
   pointer-events: none;
 }
-.logo { display: block; width: 58px; height: auto; opacity: 0.4; }
+.logo { display: block; width: 40px; height: auto; opacity: 0.4; }
 
 .entete-boutons { position: relative; z-index: 1; display: flex; gap: 8px; flex-shrink: 0; }
 /* Bouton rond de 48 px (Réglages) : verre, icône bleue */
