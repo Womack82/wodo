@@ -19,8 +19,9 @@
 - Avant de coder, signale tout point qui pose problème (limite technique,
   risque, effet secondaire) et attends sa réponse.
 - Fais un commit Git par étape, avec un message clair qui dit ce qui change.
-- Ne fais **jamais** de `git push` : l'utilisateur le fait lui-même après
-  avoir testé.
+- Après chaque commit, fais `git push` automatiquement, sans demander
+  l'accord de l'utilisateur (demande faite le 15/11/2026). Le site GitHub
+  Pages se met alors à jour tout seul.
 - Ne mets jamais une clé API dans un fichier suivi par Git sans le dire
   clairement à l'utilisateur. Aujourd'hui, les clés TMDB et RAWG sont gardées
   uniquement dans la mémoire de l'appareil (localStorage).
