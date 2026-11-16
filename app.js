@@ -7,7 +7,7 @@
 // Chaque changement, quel qu'il soit, ajoute 1 au second numéro
 // (v2.0 → v2.1 → v2.2…). v1.1 à v1.30 : avant la v2.0 (15/11/2026 : livres,
 // recettes et cocktails passés dans Toque&Tonic). Avant le 10/11/2026 : v10 à v15.1.
-const VERSION = "v2.4";
+const VERSION = "v2.5";
 
 // Noms sous lesquels on range les données dans la mémoire du téléphone.
 // Avant la v1.30, ils commençaient par « mes-listes » : migration.js
@@ -101,8 +101,6 @@ const listeAutres = document.getElementById("liste-autres");
 const badgeAutres = document.getElementById("badge-autres");
 const ligneAutres = document.getElementById("ligne-autres");
 const listeFiches = document.getElementById("liste-fiches");
-const badgeFiches = document.getElementById("badge-fiches");
-const ligneFiches = document.getElementById("ligne-fiches");
 
 // Nom du type affiché sous le titre des cartes
 const NOMS_SIMPLES = { film: "Film", serie: "Série", jeu: "Jeu", livre: "Livre", recette: "Recette", cocktail: "Cocktail", autre: "Autre" };
@@ -201,8 +199,6 @@ function afficher(animer = false) {
   listeFaits.replaceChildren(...faits.map((el) => creerCarte(el)));
   listeAutres.replaceChildren(...autres.map((el) => creerCarte(el)));
   listeFiches.replaceChildren(...fiches.map((el) => creerCarte(el)));
-  badgeFiches.textContent = fiches.length;
-  ligneFiches.hidden = fiches.length === 0;
   badgeAutres.textContent = autres.length;
   ligneAutres.hidden = autres.length === 0;
   faitsVide.hidden = faits.length > 0;

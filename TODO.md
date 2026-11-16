@@ -5,8 +5,7 @@ on coche la case `[x]`, on la déplace dans « Fait » et on fait un commit Git.
 
 ## À faire
 
-- [ ] Passer les recettes et cocktails dans Toque&Tonic : Wodo → Réglages → Sauvegarde → Exporter, puis Toque&Tonic → Réglages → Sauvegarde → Importer ; vérifier, puis Wodo → Réglages → Recettes et cocktails → Effacer
-- [ ] Après l'effacement : retirer de Wodo le code devenu inutile (recettes.js, ia.js, page de la fiche, réglage Gemini)
+- [ ] Retirer de Wodo le code devenu inutile (recettes.js, ia.js, page de la fiche, réglage Gemini)
 
 - [ ] Trier la liste (à faire d'abord, ordre alphabétique…)
 - [ ] Ajouter une note à chaque élément (« recommandé par… », note sur 5)
@@ -77,3 +76,5 @@ on coche la case `[x]`, on la déplace dans « Fait » et on fait un commit Git.
 - [x] v2.2 — Réglages : la ligne « Prénom » passe tout en bas du menu (après « Relais (jeux) », avant les mentions des sources)
 - [x] v2.3 — Accueil : une couleur par catégorie pour les icônes des 4 carrés (Films orange, Séries bleu, Jeux vert, Livres violet)
 - [x] v2.4 — Réglages : la ligne « Terminés » n'affiche plus le nombre d'éléments terminés
+- [x] Recettes et cocktails transférés dans Toque&Tonic
+- [x] v2.5 — Réglages : ligne « Recettes et cocktails » retirée (les recettes restées dans Wodo ne sont plus visibles ni effaçables depuis l'app)
