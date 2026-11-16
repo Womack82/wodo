@@ -428,14 +428,16 @@ h1, h2 { color: var(--texte); }
 .menu-categories::backdrop { background: var(--voile); }
 .menu-categories[open]::backdrop { animation: fondu 200ms ease-out; }
 
-/* Carte en verre centrée juste au-dessus de la barre : 5 choix en ligne */
+/* Carte en verre centrée juste au-dessus de la barre : 4 choix en ligne,
+   bouton fermer centré en dessous (grille de 4 colonnes) */
 .menu-carte {
   position: fixed;
   left: 0;
   right: 0;
   bottom: calc(var(--bas-barre) + 72px + 14px);
-  display: flex;
-  gap: 4px;
+  display: grid;
+  grid-template-columns: repeat(4, 60px);
+  gap: 14px 4px;
   width: max-content;
   margin: 0 auto;
   padding: 12px;
@@ -478,16 +480,25 @@ h1, h2 { color: var(--texte); }
 .menu-categories[open] .choix-menu:nth-child(5) { animation-delay: 200ms; }
 @keyframes surgir { from { opacity: 0; transform: translateY(12px); } }
 
-/* Bouton fermer : rond orange dans la carte, à droite des catégories,
-   à la hauteur des ronds (52 px) ; son + pivote de 45° et devient une croix */
+/* Bouton fermer : rond bleu de 48 px, croix blanche, centré sous les
+   catégories (toute la largeur de la grille) ; son + pivote de 45° */
 #menu-fermer {
-  flex-shrink: 0;
-  align-self: flex-start;
-  width: 52px;
-  height: 52px;
-  margin-left: 6px;
+  grid-column: 1 / -1;
+  justify-self: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  padding: 0;
+  border: none;
+  border-radius: 50%;
+  background: linear-gradient(160deg, #3f86b5, #2c6e9a);
+  color: white;
+  box-shadow: 0 6px 14px rgba(44, 110, 154, 0.35);
 }
-#menu-fermer .icone-svg { width: 26px; height: 26px; }
+#menu-fermer .icone-svg { width: 24px; height: 24px; stroke-width: 2.5; }
+#menu-fermer:active { filter: brightness(1.08); }
 .bouton-croix .icone-svg { transform: rotate(45deg); }
 .menu-categories[open] .bouton-croix .icone-svg { animation: pivoter 200ms ease-out; }
 @keyframes pivoter { from { transform: rotate(0deg); } }
