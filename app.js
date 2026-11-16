@@ -7,7 +7,7 @@
 // Chaque changement, quel qu'il soit, ajoute 1 au second numéro
 // (v2.0 → v2.1 → v2.2…). v1.1 à v1.30 : avant la v2.0 (15/11/2026 : livres,
 // recettes et cocktails passés dans Toque&Tonic). Avant le 10/11/2026 : v10 à v15.1.
-const VERSION = "v2.5";
+const VERSION = "v2.6";
 
 // Noms sous lesquels on range les données dans la mémoire du téléphone.
 // Avant la v1.30, ils commençaient par « mes-listes » : migration.js
@@ -71,6 +71,21 @@ function migrerFiches() {
   if (change) sauvegarder();
 }
 migrerFiches();
+
+// Séparation avec Toque&Tonic (v2.6) : les recettes et cocktails restés
+// dans Wodo (déjà copiés dans Toque&Tonic) sont effacés de la mémoire, et
+// leurs photos au démarrage (voir la fin du fichier). Les sauvegardes de
+// Wodo ne contiennent ainsi plus que films, séries, jeux, livres et notes.
+let fichesRetirees = false;
+function retirerFiches() {
+  const avant = elements.length;
+  elements = elements.filter((el) => !estFiche(el.type));
+  if (elements.length !== avant) {
+    fichesRetirees = true;
+    sauvegarder();
+  }
+}
+retirerFiches();
 
 // La page affichée : "accueil" ou une catégorie ("film", "serie", "jeu", "livre")
 let pageActive = "accueil";
@@ -2178,7 +2193,7 @@ async function exporter() {
     format: FORMAT_NOM,
     version: FORMAT_VERSION,
     dateExport: new Date().toISOString(),
-    elements: elements,
+    elements: elements.filter((el) => !estFiche(el.type)), // jamais de recettes
     notes: notesPourExport(), // version 9 : notes de Réglages → Notes
     photos: await preparerPhotosExport(), // version 11 : photos des fiches
   };
@@ -2217,6 +2232,9 @@ async function exporter() {
 // L'historique « supprimes » des anciens fichiers (versions 1 à 9) est ignoré.
 // On recopie seulement les champs connus, pour ne rien garder d'inattendu.
 function verifierFichier(donnees) {
+  if (typeof donnees === "object" && donnees !== null && donnees.format === "toque-tonic") {
+    throw new Error("Ce fichier est une sauvegarde de Toque&Tonic : importe-le dans Toque&Tonic.");
+  }
   if (typeof donnees !== "object" || donnees === null || !FORMATS_ACCEPTES.includes(donnees.format)) {
     throw new Error("Ce fichier n'est pas une sauvegarde de Wodo.");
   }
@@ -2334,7 +2352,13 @@ function verifierFichier(donnees) {
 
   // Notes (version 9, facultatives) : null si le fichier n'en contient pas
   // (les notes actuelles seront alors gardées) ; vérifiées dans notes.js
-  return { elements: nouveauxElements, notes: verifierNotesFichier(donnees.notes), photos };
+  // Les recettes et cocktails d'un ancien fichier sont laissés de côté
+  // (ils sont dans Toque&Tonic) ; leurs photos ne sont donc pas reprises
+  const sansFiches = nouveauxElements.filter((el) => !estFiche(el.type));
+  for (const el of nouveauxElements) {
+    if (estFiche(el.type) && el.photoId) delete photos[el.photoId];
+  }
+  return { elements: sansFiches, notes: verifierNotesFichier(donnees.notes), photos };
 }
 
 // Le fichier a été choisi : on le lit, on le vérifie, puis on demande confirmation
@@ -3203,6 +3227,7 @@ allerA("accueil");
 // puis on y range les photos gardées avant cette version
 demanderConservation();
 rangerAnciennesPhotos();
+if (fichesRetirees) nettoyerPhotos(); // photos des recettes effacées (v2.6)
 completerImdbManquants();
 // Revenu en ligne (métro, avion…) : on complète ce qui manque encore
 window.addEventListener("online", completerImdbManquants);

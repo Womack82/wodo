@@ -7,9 +7,11 @@
 - Depuis la v2.0 (15/11/2026), les recettes et cocktails ont leur propre
   app, **Toque&Tonic** (dossier `../Toque&Tonic`,
   https://womack82.github.io/toque-tonic/), née d'une copie de Wodo v1.30.
-  Wodo ne permet plus d'en ajouter ; celles qui restent sont visibles dans
-  Réglages → Recettes et cocktails, avec un bouton pour les effacer. Le code
-  des fiches (recettes.js, ia.js, page de la fiche) est encore là pour ça.
+  Wodo ne permet plus d'en ajouter. Depuis la v2.6, celles qui restaient
+  sont effacées au démarrage (avec leurs photos), ne sont jamais exportées
+  ni importées, et une sauvegarde de Toque&Tonic est refusée : chaque app a
+  son propre fichier de sauvegarde. Le code des fiches (recettes.js, ia.js,
+  page de la fiche) est encore là mais ne sert plus.
   Une correction du code commun n'est pas reportée automatiquement dans
   l'autre app.
 - Depuis la v1.30, les noms techniques commencent par « wodo » : clés de
