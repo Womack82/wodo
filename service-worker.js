@@ -7,7 +7,7 @@
 // téléphone continuera d'utiliser l'ancienne copie :
 // chaque changement ajoute 1 au second numéro : v2.0 → v2.1 → v2.2…
 // ⚠️ Change aussi VERSION en haut de app.js (affichée à côté du logo).
-const NOM_CACHE = "wodo-v2.8";
+const NOM_CACHE = "wodo-v2.9";
 
 // ⚠️ Si un seul de ces fichiers est introuvable, rien n'est mis en cache
 // (l'app ne marchera pas hors ligne) : vérifier chaque chemin.
@@ -33,10 +33,16 @@ const FICHIERS = [
   "icons/tmdb.svg",
 ];
 
-// À l'installation : on met tous les fichiers en cache
+// À l'installation : on met tous les fichiers en cache.
+// cache: "reload" : chaque fichier est redemandé au site, jamais pris dans
+// la mémoire du navigateur (GitHub Pages la garde 10 min) ; sinon deux
+// versions publiées à moins de 10 min d'écart mettaient les anciens
+// fichiers dans le nouveau cache (v2.8 restée en v2.7 sur l'iPhone).
 self.addEventListener("install", (evenement) => {
   evenement.waitUntil(
-    caches.open(NOM_CACHE).then((cache) => cache.addAll(FICHIERS))
+    caches.open(NOM_CACHE).then((cache) =>
+      cache.addAll(FICHIERS.map((fichier) => new Request(fichier, { cache: "reload" })))
+    )
   );
   self.skipWaiting();
 });

@@ -81,3 +81,4 @@ on coche la case `[x]`, on la déplace dans « Fait » et on fait un commit Git.
 - [x] v2.6 — Sauvegardes séparées de Toque&Tonic : les recettes et cocktails restés dans Wodo sont effacés au démarrage (avec leurs photos) ; l'export ne contient plus que films, séries, jeux, livres et notes ; l'import laisse de côté les recettes d'un ancien fichier et refuse une sauvegarde de Toque&Tonic (« importe-le dans Toque&Tonic »)
 - [x] v2.7 — Menu du + : le bouton orange « fermer » est dans la carte des catégories (à droite de Livre), et non plus posé sur le + qui n'est plus centré dans la barre
 - [x] v2.8 — Menu du + : bouton « fermer » centré en bas de la carte des catégories, rond bleu avec croix blanche
+- [x] v2.9 — Mise à jour fiable : à chaque nouvelle version, les fichiers sont redemandés au site (et non repris de la mémoire du navigateur, qui avait gardé la v2.7 sous le nom v2.8)
