@@ -176,6 +176,12 @@ h1, h2 { color: var(--texte); }
   color: var(--bleu);
 }
 .carre-pastille .icone-svg { width: 16px; height: 16px; }
+/* Une couleur par catégorie : pastille pâle + icône foncée de la même teinte
+   (teintes assez foncées pour rester bien visibles sur la pastille) */
+.carre[data-type="film"] .carre-pastille  { background: rgba(255, 106, 0, 0.16);  color: #c24e00; }
+.carre[data-type="serie"] .carre-pastille { background: var(--bleu-pale);         color: var(--bleu); }
+.carre[data-type="jeu"] .carre-pastille   { background: rgba(46, 125, 79, 0.15);  color: #2e7d4f; }
+.carre[data-type="livre"] .carre-pastille { background: rgba(107, 79, 160, 0.15); color: #6b4fa0; }
 .carre-nombre { font-size: 24px; font-weight: 800; line-height: 1.1; }
 .carre-libelle {
   max-width: 100%;
