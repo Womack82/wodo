@@ -7,7 +7,7 @@
 // téléphone continuera d'utiliser l'ancienne copie :
 // chaque changement ajoute 1 au second numéro : v2.0 → v2.1 → v2.2…
 // ⚠️ Change aussi VERSION en haut de app.js (affichée à côté du logo).
-const NOM_CACHE = "wodo-v2.6";
+const NOM_CACHE = "wodo-v2.7";
 
 // ⚠️ Si un seul de ces fichiers est introuvable, rien n'est mis en cache
 // (l'app ne marchera pas hors ligne) : vérifier chaque chemin.

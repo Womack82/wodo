@@ -656,8 +656,8 @@
   </dialog>
 
   <!-- Menu des catégories (bouton + de l'accueil) : 4 boutons ronds dans une
-       carte en verre au-dessus de la barre, et une copie du bouton + qui
-       pivote et devient une croix -->
+       carte en verre au-dessus de la barre, suivis d'un bouton orange
+       « fermer » (un + qui pivote et devient une croix) -->
   <dialog id="menu-categories" class="menu-categories" aria-label="Choisir une catégorie">
     <div class="menu-carte verre-flou" tabindex="-1" autofocus>
       <!-- Même ordre que la barre du bas -->
@@ -665,10 +665,11 @@
       <button type="button" class="choix-menu" data-type="serie"><span class="rond-menu"></span>Série</button>
       <button type="button" class="choix-menu" data-type="jeu"><span class="rond-menu"></span>Jeu</button>
       <button type="button" class="choix-menu" data-type="livre"><span class="rond-menu"></span>Livre</button>
+      <!-- Bouton fermer : dans la carte, à droite des catégories -->
+      <button type="button" id="menu-fermer" class="bouton-plus bouton-croix" aria-label="Fermer le menu">
+        <svg viewBox="0 0 24 24" class="icone-svg" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>
+      </button>
     </div>
-    <button type="button" id="menu-fermer" class="bouton-plus bouton-croix" aria-label="Fermer le menu">
-      <svg viewBox="0 0 24 24" class="icone-svg" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>
-    </button>
   </dialog>
 
   <!-- Calque de saisie : monte du bas après le choix d'une catégorie -->

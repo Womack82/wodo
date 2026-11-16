@@ -478,13 +478,16 @@ h1, h2 { color: var(--texte); }
 .menu-categories[open] .choix-menu:nth-child(5) { animation-delay: 200ms; }
 @keyframes surgir { from { opacity: 0; transform: translateY(12px); } }
 
-/* Copie du bouton + posée exactement sur celui de la barre (au-dessus du
-   voile) : elle pivote de 45° et devient une croix de fermeture */
+/* Bouton fermer : rond orange dans la carte, à droite des catégories,
+   à la hauteur des ronds (52 px) ; son + pivote de 45° et devient une croix */
 #menu-fermer {
-  position: fixed;
-  left: calc(50% - 28px);
-  bottom: calc(var(--bas-barre) + 8px);
+  flex-shrink: 0;
+  align-self: flex-start;
+  width: 52px;
+  height: 52px;
+  margin-left: 6px;
 }
+#menu-fermer .icone-svg { width: 26px; height: 26px; }
 .bouton-croix .icone-svg { transform: rotate(45deg); }
 .menu-categories[open] .bouton-croix .icone-svg { animation: pivoter 200ms ease-out; }
 @keyframes pivoter { from { transform: rotate(0deg); } }

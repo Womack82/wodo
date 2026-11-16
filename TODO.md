@@ -79,3 +79,4 @@ on coche la case `[x]`, on la déplace dans « Fait » et on fait un commit Git.
 - [x] Recettes et cocktails transférés dans Toque&Tonic
 - [x] v2.5 — Réglages : ligne « Recettes et cocktails » retirée (les recettes restées dans Wodo ne sont plus visibles ni effaçables depuis l'app)
 - [x] v2.6 — Sauvegardes séparées de Toque&Tonic : les recettes et cocktails restés dans Wodo sont effacés au démarrage (avec leurs photos) ; l'export ne contient plus que films, séries, jeux, livres et notes ; l'import laisse de côté les recettes d'un ancien fichier et refuse une sauvegarde de Toque&Tonic (« importe-le dans Toque&Tonic »)
+- [x] v2.7 — Menu du + : le bouton orange « fermer » est dans la carte des catégories (à droite de Livre), et non plus posé sur le + qui n'est plus centré dans la barre
