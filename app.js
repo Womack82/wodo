@@ -7,7 +7,7 @@
 // Chaque changement, quel qu'il soit, ajoute 1 au second numéro
 // (v2.0 → v2.1 → v2.2…). v1.1 à v1.30 : avant la v2.0 (15/11/2026 : livres,
 // recettes et cocktails passés dans Toque&Tonic). Avant le 10/11/2026 : v10 à v15.1.
-const VERSION = "v2.3";
+const VERSION = "v2.4";
 
 // Noms sous lesquels on range les données dans la mémoire du téléphone.
 // Avant la v1.30, ils commençaient par « mes-listes » : migration.js
@@ -96,7 +96,6 @@ const mentionOpenLibrary = document.getElementById("mention-openlibrary");
 const onglets = document.querySelectorAll(".onglet");
 // Dans le panneau Réglages
 const listeFaits = document.getElementById("liste-faits");
-const badgeFaits = document.getElementById("badge-faits");
 const faitsVide = document.getElementById("faits-vide");
 const listeAutres = document.getElementById("liste-autres");
 const badgeAutres = document.getElementById("badge-autres");
@@ -204,7 +203,6 @@ function afficher(animer = false) {
   listeFiches.replaceChildren(...fiches.map((el) => creerCarte(el)));
   badgeFiches.textContent = fiches.length;
   ligneFiches.hidden = fiches.length === 0;
-  badgeFaits.textContent = faits.length;
   badgeAutres.textContent = autres.length;
   ligneAutres.hidden = autres.length === 0;
   faitsVide.hidden = faits.length > 0;

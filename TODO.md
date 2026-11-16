@@ -76,3 +76,4 @@ on coche la case `[x]`, on la déplace dans « Fait » et on fait un commit Git.
 - [x] v2.1 — Notes : bouton retiré de la barre du bas, elles restent seulement dans Réglages → Notes. Barre : Accueil, Films, Séries | + | Jeux, Livres
 - [x] v2.2 — Réglages : la ligne « Prénom » passe tout en bas du menu (après « Relais (jeux) », avant les mentions des sources)
 - [x] v2.3 — Accueil : une couleur par catégorie pour les icônes des 4 carrés (Films orange, Séries bleu, Jeux vert, Livres violet)
+- [x] v2.4 — Réglages : la ligne « Terminés » n'affiche plus le nombre d'éléments terminés
