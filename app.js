@@ -7,7 +7,7 @@
 // Chaque changement, quel qu'il soit, ajoute 1 au second numéro
 // (v2.0 → v2.1 → v2.2…). v1.1 à v1.30 : avant la v2.0 (15/11/2026 : livres,
 // recettes et cocktails passés dans Toque&Tonic). Avant le 10/11/2026 : v10 à v15.1.
-const VERSION = "v2.10";
+const VERSION = "v2.11";
 
 // Noms sous lesquels on range les données dans la mémoire du téléphone.
 // Avant la v1.30, ils commençaient par « mes-listes » : migration.js
@@ -735,17 +735,40 @@ function fermerAjout() {
 // ouvre le calque de saisie tout de suite (pendant l'appui : sinon l'iPhone
 // refuse d'ouvrir le clavier).
 const menuCategories = document.getElementById("menu-categories");
+// Fermeture animée en cours (null = aucune)
+let minuteurFermetureMenu = null;
 function ouvrirMenu() {
+  // Rouvert pendant l'animation de fermeture : on annule la fermeture
+  clearTimeout(minuteurFermetureMenu);
+  minuteurFermetureMenu = null;
+  menuCategories.classList.remove("fermeture");
   verrouillerPage();
-  menuCategories.showModal();
+  if (!menuCategories.open) menuCategories.showModal();
 }
-const fermerMenu = () => menuCategories.close();
+// Croix ou voile : petite animation de sortie (classe « fermeture », voir
+// style.css), puis fermeture au bout de 180 ms. Sans animation si
+// « Réduire les animations » est activé.
+function fermerMenu() {
+  if (!menuCategories.open || minuteurFermetureMenu) return;
+  if (sansAnimation.matches) {
+    menuCategories.close();
+    return;
+  }
+  menuCategories.classList.add("fermeture");
+  minuteurFermetureMenu = setTimeout(() => {
+    minuteurFermetureMenu = null;
+    menuCategories.classList.remove("fermeture");
+    menuCategories.close();
+  }, 180);
+}
 menuCategories.addEventListener("close", deverrouillerPage);
 bloquerGlissement(menuCategories);
 for (const choix of menuCategories.querySelectorAll(".choix-menu")) {
   choix.querySelector(".rond-menu").append(creerIcone(ICONES_TYPES[choix.dataset.type]));
   choix.addEventListener("click", () => {
-    fermerMenu();
+    // Fermeture immédiate (sans animation) : le calque d'ajout doit
+    // s'ouvrir pendant l'appui pour que l'iPhone ouvre le clavier
+    menuCategories.close();
     ouvrirAjout(choix.dataset.type);
   });
 }

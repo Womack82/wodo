@@ -422,16 +422,18 @@ h1, h2 { color: var(--texte); }
 .menu-categories::backdrop { background: var(--voile); }
 .menu-categories[open]::backdrop { animation: fondu 200ms ease-out; }
 
-/* Carte en verre centrée juste au-dessus de la barre : 4 choix en ligne,
-   bouton fermer centré en dessous (grille de 4 colonnes) */
+/* Carte en verre centrée au-dessus de la barre : 4 choix en ligne,
+   bouton fermer centré en dessous (grille de 4 colonnes). La carte
+   s'arrête au milieu du bouton fermer, dont le bas reste à 36 px de la
+   barre (72 px de barre + 36 px + 24 px = moitié du bouton qui dépasse) */
 .menu-carte {
   position: fixed;
   left: 0;
   right: 0;
-  bottom: calc(var(--bas-barre) + 72px + 14px);
+  bottom: calc(var(--bas-barre) + 72px + 36px + 24px);
   display: grid;
   grid-template-columns: repeat(4, 60px);
-  gap: 14px 4px;
+  gap: 10px 4px;
   width: max-content;
   margin: 0 auto;
   padding: 12px;
@@ -475,10 +477,13 @@ h1, h2 { color: var(--texte); }
 @keyframes surgir { from { opacity: 0; transform: translateY(12px); } }
 
 /* Bouton fermer : rond bleu de 48 px, croix blanche, centré sous les
-   catégories (toute la largeur de la grille) ; son + pivote de 45° */
+   catégories (toute la largeur de la grille) ; son + pivote de 45°.
+   Marge du bas négative (12 px de marge de la carte + 24 px = moitié du
+   bouton) : la carte s'arrête au milieu du bouton, le bas dépasse */
 #menu-fermer {
   grid-column: 1 / -1;
   justify-self: center;
+  margin-bottom: -36px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -496,6 +501,15 @@ h1, h2 { color: var(--texte); }
 .bouton-croix .icone-svg { transform: rotate(45deg); }
 .menu-categories[open] .bouton-croix .icone-svg { animation: pivoter 200ms ease-out; }
 @keyframes pivoter { from { transform: rotate(0deg); } }
+
+/* Fermeture (croix ou voile) : la carte redescend en fondu, le voile
+   s'efface et la croix redevient un + (180 ms), puis app.js ferme le menu */
+.menu-categories.fermeture::backdrop { animation: fondu-sortie 180ms ease-in forwards; }
+.menu-categories.fermeture .menu-carte { animation: disparaitre-bas 180ms ease-in forwards; }
+.menu-categories.fermeture .bouton-croix .icone-svg { animation: pivoter-retour 180ms ease-in forwards; }
+@keyframes fondu-sortie { to { opacity: 0; } }
+@keyframes disparaitre-bas { to { opacity: 0; transform: translateY(16px); } }
+@keyframes pivoter-retour { to { transform: rotate(0deg); } }
 
 /* ---------- Panneaux (Réglages en haut, actions en bas) ---------- */
 /* <dialog> : la fenêtre ; le voile sombre derrière = ::backdrop */
