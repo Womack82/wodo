@@ -7,7 +7,7 @@
 // téléphone continuera d'utiliser l'ancienne copie :
 // chaque changement ajoute 1 au second numéro : v2.0 → v2.1 → v2.2…
 // ⚠️ Change aussi VERSION en haut de app.js (affichée à côté du logo).
-const NOM_CACHE = "wodo-v2.9";
+const NOM_CACHE = "wodo-v2.10";
 
 // ⚠️ Si un seul de ces fichiers est introuvable, rien n'est mis en cache
 // (l'app ne marchera pas hors ligne) : vérifier chaque chemin.
@@ -16,9 +16,6 @@ const FICHIERS = [
   "index.html",
   "style.css",
   "migration.js",
-  "recettes.js",
-  "ia.js",
-  "photos.js",
   "app.js",
   "notes.js",
   "manifest.json?v=2",
@@ -64,7 +61,7 @@ self.addEventListener("activate", (evenement) => {
 // À chaque demande de fichier : on sert la copie en cache si elle existe,
 // sinon on va la chercher sur internet.
 self.addEventListener("fetch", (evenement) => {
-  // Les demandes vers d'autres sites (TMDB, RAWG, relais des recettes, photos) ne passent
+  // Les demandes vers d'autres sites (TMDB, relais des jeux, Open Library, affiches) ne passent
   // pas par le cache : le navigateur s'en occupe normalement.
   if (new URL(evenement.request.url).origin !== self.location.origin) return;
   evenement.respondWith(

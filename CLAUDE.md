@@ -8,18 +8,20 @@
   app, **Toque&Tonic** (dossier `../Toque&Tonic`,
   https://womack82.github.io/toque-tonic/), née d'une copie de Wodo v1.30.
   Wodo ne permet plus d'en ajouter. Depuis la v2.6, celles qui restaient
-  sont effacées au démarrage (avec leurs photos), ne sont jamais exportées
-  ni importées, et une sauvegarde de Toque&Tonic est refusée : chaque app a
-  son propre fichier de sauvegarde. Le code des fiches (recettes.js, ia.js,
-  page de la fiche) est encore là mais ne sert plus.
+  sont effacées au démarrage, ne sont jamais exportées ni importées, et une
+  sauvegarde de Toque&Tonic est refusée : chaque app a son propre fichier
+  de sauvegarde. Depuis la v2.10, le code des fiches est retiré (recettes.js,
+  ia.js, photos.js, page de la fiche, Gemini) ; au démarrage, l'app efface
+  encore la mémoire des photos et la clé Gemini restées sur l'appareil.
+  Le relais Cloudflare sert aussi à Toque&Tonic (import de recettes) : ne
+  pas retirer cette partie de `relais/worker.js`.
   Une correction du code commun n'est pas reportée automatiquement dans
   l'autre app.
 - Depuis la v1.30, les noms techniques commencent par « wodo » : clés de
-  la mémoire (localStorage), base des photos (IndexedDB « wodo-photos »),
-  format des sauvegardes (`format: "wodo"`), nom du cache (« wodo-v… »).
-  Les anciens noms « mes-listes… » restent connus : `migration.js` et
-  `photos.js` déplacent les anciennes données, l'import accepte les
-  anciennes sauvegardes. Ne pas retirer ce code ni renommer à nouveau
+  la mémoire (localStorage), format des sauvegardes (`format: "wodo"`),
+  nom du cache (« wodo-v… »). Les anciens noms « mes-listes… » restent
+  connus : `migration.js` déplace les anciennes données, l'import accepte
+  les anciennes sauvegardes. Ne pas retirer ce code ni renommer à nouveau
   sans migration : on perdrait les données déjà enregistrées.
 - Le nettoyage du cache (`service-worker.js`) ne doit effacer que les
   caches de Wodo : d'autres apps sont publiées sur le même site

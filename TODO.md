@@ -5,14 +5,12 @@ on coche la case `[x]`, on la déplace dans « Fait » et on fait un commit Git.
 
 ## À faire
 
-- [ ] Retirer de Wodo le code devenu inutile (recettes.js, ia.js, page de la fiche, réglage Gemini)
 
 - [ ] Trier la liste (à faire d'abord, ordre alphabétique…)
 - [ ] Ajouter une note à chaque élément (« recommandé par… », note sur 5)
 - [ ] Synchroniser la liste entre le PC et l'iPhone (stockage en ligne)
 
-- [ ] Déployer le relais sur Cloudflare avec les secrets IGDB (voir `relais/LISEZMOI-RELAIS.md`, étapes 1 à 8) et coller son adresse dans Réglages → Relais (recettes et jeux)
-- [ ] Créer une clé Gemini (aistudio.google.com → « Get API key ») et la coller dans Réglages → IA (Gemini), sur chaque appareil
+- [ ] Déployer le relais sur Cloudflare avec les secrets IGDB (voir `relais/LISEZMOI-RELAIS.md`, étapes 1 à 8) et coller son adresse dans Réglages → Relais (jeux)
 
 ## Fait
 
@@ -82,3 +80,4 @@ on coche la case `[x]`, on la déplace dans « Fait » et on fait un commit Git.
 - [x] v2.7 — Menu du + : le bouton orange « fermer » est dans la carte des catégories (à droite de Livre), et non plus posé sur le + qui n'est plus centré dans la barre
 - [x] v2.8 — Menu du + : bouton « fermer » centré en bas de la carte des catégories, rond bleu avec croix blanche
 - [x] v2.9 — Mise à jour fiable : à chaque nouvelle version, les fichiers sont redemandés au site (et non repris de la mémoire du navigateur, qui avait gardé la v2.7 sous le nom v2.8)
+- [x] v2.10 — Code des recettes et cocktails retiré de Wodo (recettes.js, ia.js, photos.js, page de la fiche, ajout avec l'IA, import depuis un lien, réglages Gemini et « Recettes et cocktails », styles associés : environ 2 000 lignes en moins). Au démarrage, les recettes restantes, la mémoire des photos et la clé Gemini sont effacées. Une ancienne sauvegarde avec des recettes reste acceptée (recettes ignorées). Le relais Cloudflare n'est pas touché (Toque&Tonic s'en sert)
