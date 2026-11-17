@@ -7,7 +7,7 @@
 // Chaque changement, quel qu'il soit, ajoute 1 au second numéro
 // (v2.0 → v2.1 → v2.2…). v1.1 à v1.30 : avant la v2.0 (15/11/2026 : livres,
 // recettes et cocktails passés dans Toque&Tonic). Avant le 10/11/2026 : v10 à v15.1.
-const VERSION = "v2.12";
+const VERSION = "v2.13";
 
 // Noms sous lesquels on range les données dans la mémoire du téléphone.
 // Avant la v1.30, ils commençaient par « mes-listes » : migration.js
@@ -868,10 +868,12 @@ const FORMATS_ACCEPTES = [FORMAT_NOM, "mes-listes"];
 // Version 13 : + livres (type « livre ») venus d'Open Library : auteur,
 // identifiant « idOpenLibrary » (OL…W) et couverture dans « affiche »
 // (adresse covers.openlibrary.org).
-// L'app sait lire les treize. Les clés (TMDB) n'y sont jamais.
+// Version 14 : + « cles » : clé TMDB et adresse du relais (chaînes vides si absentes).
+// Depuis la v2.13, ces clés sont donc dans le fichier : ne pas le partager.
+// L'app sait lire les quatorze.
 // Depuis la v2.6, les recettes et cocktails (et leurs photos) n'y sont plus :
 // ceux d'un ancien fichier sont laissés de côté (ils sont dans Toque&Tonic).
-const FORMAT_VERSION = 13;
+const FORMAT_VERSION = 14;
 
 const boutonExporter = document.getElementById("bouton-exporter");
 const boutonImporter = document.getElementById("bouton-importer");
@@ -887,6 +889,15 @@ const boutonAnnulerImport = document.getElementById("bouton-annuler-import");
 
 // Les données du fichier choisi, en attente de confirmation
 let importEnAttente = null;
+
+// Fonctions qui réaffichent l'état des clés dans Réglages (remplies plus bas)
+const rafraichirReglagesCles = [];
+
+// Écrit une clé dans la mémoire de l'appareil ; vide = on l'efface
+function remplacerCle(nomStockage, valeur) {
+  if (valeur === "") localStorage.removeItem(nomStockage);
+  else localStorage.setItem(nomStockage, valeur);
+}
 
 // Affiche un message dans une zone (succes = vert, sinon rouge).
 // Par défaut, la zone de la section Sauvegarde.
@@ -917,6 +928,8 @@ async function exporter() {
     dateExport: new Date().toISOString(),
     elements,
     notes: notesPourExport(), // version 9 : notes de Réglages → Notes
+    // version 14 : clés et relais, pour ne pas les ressaisir après une réinstallation
+    cles: { tmdb: lireCleTmdb(), relais: lireCle(CLE_RELAIS) },
   };
   const texte = JSON.stringify(donnees, null, 2); // indenté : lisible à l'œil
   const date = new Date().toLocaleDateString("sv-SE"); // donne "2026-11-09"
@@ -948,7 +961,28 @@ async function exporter() {
   return true;
 }
 
-// Vérifie le contenu d'un fichier. Renvoie { elements, notes } si tout
+// Clés (version 14, facultatives) : null si le fichier n'en contient pas
+// (les clés actuelles seront alors gardées). Sinon, chaîne vide = pas de clé.
+function verifierClesFichier(cles) {
+  if (cles === undefined) return null;
+  if (typeof cles !== "object" || cles === null) throw new Error("Les clés du fichier sont illisibles.");
+  const tmdb = cles.tmdb === undefined ? "" : cles.tmdb;
+  const relais = cles.relais === undefined ? "" : cles.relais;
+  if (typeof tmdb !== "string" || typeof relais !== "string") throw new Error("Les clés du fichier sont illisibles.");
+  if (tmdb.length > 200) throw new Error("La clé TMDB du fichier est trop longue.");
+  if (relais !== "") {
+    let adresse;
+    try {
+      adresse = new URL(relais);
+    } catch {
+      throw new Error("L'adresse du relais du fichier est invalide.");
+    }
+    if (adresse.protocol !== "https:") throw new Error("L'adresse du relais du fichier doit commencer par https://.");
+  }
+  return { tmdb: tmdb.trim(), relais };
+}
+
+// Vérifie le contenu d'un fichier. Renvoie { elements, notes, cles } si tout
 // est correct, sinon lance une erreur avec un message clair.
 // L'historique « supprimes » des anciens fichiers (versions 1 à 9) est ignoré.
 // On recopie seulement les champs connus, pour ne rien garder d'inattendu.
@@ -1043,7 +1077,7 @@ function verifierFichier(donnees) {
 
   // Notes (version 9, facultatives) : null si le fichier n'en contient pas
   // (les notes actuelles seront alors gardées) ; vérifiées dans notes.js
-  return { elements: nouveauxElements, notes: verifierNotesFichier(donnees.notes) };
+  return { elements: nouveauxElements, notes: verifierNotesFichier(donnees.notes), cles: verifierClesFichier(donnees.cles) };
 }
 
 // Le fichier a été choisi : on le lit, on le vérifie, puis on demande confirmation
@@ -1086,7 +1120,10 @@ async function lireFichierChoisi() {
     ? `Ta liste actuelle est vide. Elle sera remplacée par celle du fichier (${resumer(importEnAttente.elements)}).`
     : `Tu vas perdre ${pluriel(nbActuels, "élément")} de ta liste actuelle (${resumer(elements)}). ` +
       `Ils seront remplacés par les ${pluriel(nbImportes, "élément")} du fichier (${resumer(importEnAttente.elements)}).`) +
-    phraseNotes;
+    phraseNotes +
+    (importEnAttente.cles === null
+      ? ""
+      : " Les clés (TMDB) et l'adresse du relais seront remplacées par celles du fichier.");
   // Pas de sauvegarde à proposer si rien ne sera perdu
   conseilSauvegarde.hidden = listeVide;
   boutonSauverAvant.hidden = listeVide;
@@ -1106,6 +1143,13 @@ async function remplacerListe() {
     // Notes du fichier (s'il en contient) ; en cas d'échec, notes.js
     // remet les anciennes et on remet aussi la liste
     if (enAttente.notes !== null) remplacerNotes(enAttente.notes);
+    // Clés et relais du fichier (version 14) : une chaîne vide efface la clé
+    if (enAttente.cles !== null) {
+      remplacerCle(CLE_TMDB, enAttente.cles.tmdb);
+      remplacerCle(CLE_RELAIS, enAttente.cles.relais);
+      // Les écrans Réglages affichent l'état des clés : on le met à jour
+      for (const rafraichir of rafraichirReglagesCles) rafraichir();
+    }
   } catch (erreur) {
     // Mémoire du téléphone pleine, etc. : on remet tout comme avant
     elements = anciensElements;
@@ -1266,6 +1310,7 @@ function brancherCle(nom, nomStockage, prefixe, verifier) {
     afficherMessage("Clé effacée de cet appareil.", true, message);
   });
 
+  rafraichirReglagesCles.push(afficherEtat);
   afficherEtat();
 }
 
@@ -1314,6 +1359,7 @@ brancherCle("TMDB", CLE_TMDB, "cle", (cle) => appelerTmdb("/authentication", {},
     afficherMessage("Adresse effacée de cet appareil.", true, messageRelais);
   });
 
+  rafraichirReglagesCles.push(afficherEtatRelais);
   afficherEtatRelais();
 }
 

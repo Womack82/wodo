@@ -45,7 +45,11 @@
   Pages se met alors à jour tout seul.
 - Ne mets jamais une clé API dans un fichier suivi par Git sans le dire
   clairement à l'utilisateur. Aujourd'hui, la clé TMDB et l'adresse du relais
-  sont gardées uniquement dans la mémoire de l'appareil (localStorage).
+  sont gardées dans la mémoire de l'appareil (localStorage) et sont aussi
+  écrites dans le fichier de sauvegarde (« cles », format version 14, depuis
+  la v2.13). Ce fichier ne doit donc pas être partagé : l'app n'est pas
+  destinée à être partagée (décision de l'utilisateur, 17/11/2026).
+  Ces clés ne doivent jamais aller dans Git ni dans le code.
   Open Library (livres) n'a pas besoin de clé.
 
 ## Version et cache
