@@ -424,13 +424,14 @@ h1, h2 { color: var(--texte); }
 
 /* Carte en verre centrée au-dessus de la barre : 4 choix en ligne,
    bouton fermer centré en dessous (grille de 4 colonnes). La carte
-   s'arrête au milieu du bouton fermer, dont le bas reste à 36 px de la
-   barre (72 px de barre + 36 px + 24 px = moitié du bouton qui dépasse) */
+   s'arrête au milieu du bouton fermer. Depuis la v2.12, la carte est
+   descendue de 36 px : son bas est à 96 px au-dessus du bas de l'écran
+   (72 px de barre + 24 px) */
 .menu-carte {
   position: fixed;
   left: 0;
   right: 0;
-  bottom: calc(var(--bas-barre) + 72px + 36px + 24px);
+  bottom: calc(var(--bas-barre) + 72px + 24px);
   display: grid;
   grid-template-columns: repeat(4, 60px);
   gap: 10px 4px;
